@@ -12,15 +12,18 @@ public class Mover : MonoBehaviour
     void Start()
     {
         navMesh = GetComponent<NavMeshAgent>();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        
         if (Input.GetMouseButtonDown(1))
         {
             MoveToCursor();
         }
+        UpdateAnimator();
     }
 
     private void MoveToCursor()
@@ -32,5 +35,13 @@ public class Mover : MonoBehaviour
         {
             navMesh.destination = hit.point;
         }
+    }
+
+    private void UpdateAnimator()
+    {
+        Vector3 velocity = navMesh.velocity;
+        Vector3 localVelocity = transform.InverseTransformDirection(velocity);
+        float speed = localVelocity.z;
+        GetComponent<Animator>().SetFloat("ForwardSpeed", speed);
     }
 }
