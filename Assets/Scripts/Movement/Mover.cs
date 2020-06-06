@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using RPG.Combat;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace RPG.Movement
@@ -11,7 +12,6 @@ namespace RPG.Movement
         void Start()
         {
             navMesh = GetComponent<NavMeshAgent>();
-
         }
 
         // Update is called once per frame
@@ -20,9 +20,21 @@ namespace RPG.Movement
             UpdateAnimator();
         }
 
+        public void StartMoveAction(Vector3 destination)
+        {
+            GetComponent<Fighter>().Cancel();
+            MoveTo(destination);
+        }
+
         public void MoveTo(Vector3 destination)
         {
             navMesh.destination = destination;
+            navMesh.isStopped = false;
+        }
+
+        public void Stop()
+        {
+            navMesh.isStopped = true;
         }
 
         private void UpdateAnimator()
