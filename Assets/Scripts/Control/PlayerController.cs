@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace RPG.Control
 {
+    /// <summary>
+    ///
+    /// This class controls all interations between player and environment
+    /// 
+    /// </summary>
     public class PlayerController : MonoBehaviour
     {
 
@@ -16,6 +21,17 @@ namespace RPG.Control
                 return;
         }
 
+        /// <summary>
+        /// private bool InteractWithCombat -> Whether the player clicked enemy
+        ///
+        /// This will determine whether player clicked enemy. If the player
+        /// clicked an ememy, it will call the "Attack" method.
+        /// 
+        /// </summary>
+        /// 
+        /// <returns>
+        /// Returns whether player clicked an enemy
+        /// </returns>
         private bool InteractWithCombat()
         {
             RaycastHit[] hits = Physics.RaycastAll(GetMouseRay());
@@ -36,6 +52,16 @@ namespace RPG.Control
             return false;
         }
 
+        /// <summary>
+        ///
+        /// This will get the information from "Raycast" and let player move
+        /// to the point where the ray first hit. 
+        /// 
+        /// </summary>
+        /// 
+        /// <returns>
+        /// Returns whetcher player clicked on a moveable location.
+        /// </returns>
         private bool InteractWithMovement()
         {
             bool hasHit = Physics.Raycast(GetMouseRay(), out RaycastHit hit);
@@ -50,6 +76,12 @@ namespace RPG.Control
             return false;
         }
 
+        /// <summary>
+        ///
+        /// Other methods use this to get the ray.
+        /// 
+        /// </summary>
+        /// <returns> A ray from the camera </returns>
         private static Ray GetMouseRay()
         {
             return Camera.main.ScreenPointToRay(Input.mousePosition);
