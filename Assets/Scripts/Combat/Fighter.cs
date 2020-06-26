@@ -14,7 +14,7 @@ namespace RPG.Combat
         [SerializeField] float timeBetweenAttacks = 3f;
         [SerializeField] float weaponDamage = 10f;
 
-        float timeSinceLastAttack = 0;
+        float timeSinceLastAttack = Mathf.Infinity;
 
         [SerializeField] Health target = null;
         Mover mover;
@@ -54,13 +54,13 @@ namespace RPG.Combat
             }
         }
 
-        private void TriggerAttack()
+        public void TriggerAttack()
         {
             GetComponent<Animator>().ResetTrigger("stopAttack");
             GetComponent<Animator>().SetTrigger("attack");
         }
 
-        public bool CanAttack(CombatTarget combatTarget)
+        public bool CanAttack(GameObject combatTarget)
         {
             if (combatTarget == null)
             {
@@ -105,7 +105,7 @@ namespace RPG.Combat
         /// 
         /// </summary>
         /// <param name="combatTarget">Enemy who fight with player</param>
-        public void Attack(CombatTarget combatTarget)
+        public void Attack(GameObject combatTarget)
         {
             GetComponent<ActionScheduler>().StartAction(this);
             target = combatTarget.GetComponent<Health>();

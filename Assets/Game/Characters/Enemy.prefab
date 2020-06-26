@@ -26,7 +26,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f44b4e571c2424e0f9942d92fa6d7871, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 20
+  health: 30
+--- !u!114 &465269867289210381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7250580005644535780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8414fb2b6d0c47259b1eed0155229ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chaseDistance: 5
+  player: {fileID: 0}
 --- !u!114 &8669991711746821433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,6 +176,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587423811409433290, guid: 6f5cdd396a8e043b5bdcac0960a649fa,
+        type: 3}
+      propertyPath: weaponRange
+      value: 1.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587423811409433290, guid: 6f5cdd396a8e043b5bdcac0960a649fa,
+        type: 3}
+      propertyPath: weaponDamage
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6f5cdd396a8e043b5bdcac0960a649fa, type: 3}
