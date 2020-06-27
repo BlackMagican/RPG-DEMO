@@ -12,10 +12,17 @@ namespace RPG.Control
     {
         [SerializeField] float chaseDistance = 5f;
         [SerializeField] GameObject player = null;
+        [SerializeField] float suspicionTime = 3f;
+        [SerializeField] PatrolPath patrolPath = null;
+        [SerializeField] float waypointTolerance = 1f;
+
         Fighter fighter;
         Health health;
         Mover mover = null;
         Vector3 guardPosition;
+
+        float timeSinceLastSawPlayer = Mathf.Infinity;
+        int currentWaypointIndex = 0;
         // Start is called before the first frame update
         void Start()
         {
@@ -35,11 +42,59 @@ namespace RPG.Control
             }
             if (InAttackRangeOfPlayer() && fighter.CanAttack(player))
             {
-                fighter.Attack(player);
-            }else
-            {
-                mover.StartMoveAction(guardPosition);
+                timeSinceLastSawPlayer = 0;
+                AttackBehaviour();
             }
+            else if (timeSinceLastSawPlayer < suspicionTime)
+            {
+                SuspicionBehaviour();
+            }
+            else
+            {
+                PatrolBehaviour();
+            }
+            timeSinceLastSawPlayer += Time.deltaTime;
+        }
+
+        private void PatrolBehaviour()
+        {
+            Vector3 nextPosition = guardPosition;
+
+            if (patrolPath != null)
+            {
+                if (AtWaypoint())
+                {
+                    CycleWaypoint();
+                }
+                nextPosition = GetCurrentWaypoint();
+            }
+            mover.StartMoveAction(nextPosition);
+        }
+
+        private Vector3 GetCurrentWaypoint()
+        {
+            return patrolPath.GetWaypoint(currentWaypointIndex);
+        }
+
+        private bool AtWaypoint()
+        {
+            return Vector3.Distance(transform.position,
+                GetCurrentWaypoint()) < waypointTolerance;
+        }
+
+        private void CycleWaypoint()
+        {
+            currentWaypointIndex = patrolPath.GetNextIndex(currentWaypointIndex);
+        }
+
+        private void AttackBehaviour()
+        {
+            fighter.Attack(player);
+        }
+
+        private void SuspicionBehaviour()
+        {
+            GetComponent<ActionScheduler>().CancelCurrentAction();
         }
 
         private bool InAttackRangeOfPlayer()

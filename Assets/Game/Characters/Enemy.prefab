@@ -41,6 +41,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chaseDistance: 5
   player: {fileID: 0}
+  suspicionTime: 3
+  patrolPath: {fileID: 0}
+  waypointTolerance: 1
 --- !u!114 &8669991711746821433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,7 +123,7 @@ PrefabInstance:
     - target: {fileID: 234610530284354058, guid: 6f5cdd396a8e043b5bdcac0960a649fa,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.4086189
+      value: 0.93
       objectReference: {fileID: 0}
     - target: {fileID: 234610530284354058, guid: 6f5cdd396a8e043b5bdcac0960a649fa,
         type: 3}
@@ -130,7 +133,7 @@ PrefabInstance:
     - target: {fileID: 234610530284354058, guid: 6f5cdd396a8e043b5bdcac0960a649fa,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.49308
+      value: 1.41
       objectReference: {fileID: 0}
     - target: {fileID: 234610530284354058, guid: 6f5cdd396a8e043b5bdcac0960a649fa,
         type: 3}
@@ -171,6 +174,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 234610530284354059, guid: 6f5cdd396a8e043b5bdcac0960a649fa,
+        type: 3}
+      propertyPath: m_Speed
+      value: 2.8
       objectReference: {fileID: 0}
     - target: {fileID: 234610530284354062, guid: 6f5cdd396a8e043b5bdcac0960a649fa,
         type: 3}
