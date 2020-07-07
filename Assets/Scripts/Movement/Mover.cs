@@ -9,6 +9,7 @@ namespace RPG.Movement
     /// </summary>
     public class Mover : MonoBehaviour, IAction
     {
+        [SerializeField] float maxSpeed = 6f;
         NavMeshAgent navMesh = null;
         Health health = null;
 
@@ -30,10 +31,10 @@ namespace RPG.Movement
         /// 
         /// </summary>
         /// <param name="destination">place to move</param>
-        public void StartMoveAction(Vector3 destination)
+        public void StartMoveAction(Vector3 destination, float speedFraction)
         {
             GetComponent<ActionScheduler>().StartAction(this);
-            MoveTo(destination);
+            MoveTo(destination, speedFraction);
         }
 
         /// <summary>
@@ -41,10 +42,13 @@ namespace RPG.Movement
         /// Move the player to where they want to go.
         /// 
         /// </summary>
-        /// <param name="destination"></param>
-        public void MoveTo(Vector3 destination)
+        /// <param name="speedFraction">
+        /// Determine the speed when characters move.
+        /// </param>
+        public void MoveTo(Vector3 destination, float speedFraction)
         {
             navMesh.destination = destination;
+            navMesh.speed = maxSpeed * Mathf.Clamp01(speedFraction);
             navMesh.isStopped = false;
         }
 

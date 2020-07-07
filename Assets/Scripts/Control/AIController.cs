@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace RPG.Control
 {
+    /// <summary>
+    /// This class implements enemy's behaviour.
+    /// </summary>
     public class AIController : MonoBehaviour
     {
         [SerializeField] float chaseDistance = 5f;
@@ -15,6 +18,8 @@ namespace RPG.Control
         [SerializeField] float suspicionTime = 3f;
         [SerializeField] PatrolPath patrolPath = null;
         [SerializeField] float waypointTolerance = 1f;
+        [SerializeField] float waypointDwellTime = 2f;
+        [Range(0, 1)] [SerializeField] float patrolSpeedFraction = 0.2f;
 
         Fighter fighter;
         Health health;
@@ -22,7 +27,9 @@ namespace RPG.Control
         Vector3 guardPosition;
 
         float timeSinceLastSawPlayer = Mathf.Infinity;
+        float timeSinceArrivedAtWaypoint = Mathf.Infinity;
         int currentWaypointIndex = 0;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -40,11 +47,19 @@ namespace RPG.Control
             {
                 return;
             }
+            /*
+             * When player enters the warning distance,
+             * it will attack player.
+             */
             if (InAttackRangeOfPlayer() && fighter.CanAttack(player))
             {
-                timeSinceLastSawPlayer = 0;
                 AttackBehaviour();
             }
+            /*
+             * When player run out of chase distance,
+             * it will wait for seconds to ensure that
+             * his enemy has gone.
+             */
             else if (timeSinceLastSawPlayer < suspicionTime)
             {
                 SuspicionBehaviour();
@@ -53,9 +68,19 @@ namespace RPG.Control
             {
                 PatrolBehaviour();
             }
-            timeSinceLastSawPlayer += Time.deltaTime;
+            UpdateTimers();
         }
 
+        private void UpdateTimers()
+        {
+            timeSinceLastSawPlayer += Time.deltaTime;
+            timeSinceArrivedAtWaypoint += Time.deltaTime;
+        }
+
+        /// <summary>
+        /// If enemy has patrol path,
+        /// this method will let it keeping patrol along the patrol path.
+        /// </summary>
         private void PatrolBehaviour()
         {
             Vector3 nextPosition = guardPosition;
@@ -64,39 +89,67 @@ namespace RPG.Control
             {
                 if (AtWaypoint())
                 {
+                    timeSinceArrivedAtWaypoint = 0;
                     CycleWaypoint();
                 }
                 nextPosition = GetCurrentWaypoint();
             }
-            mover.StartMoveAction(nextPosition);
+            if (timeSinceArrivedAtWaypoint > waypointDwellTime)
+            {
+                mover.StartMoveAction(nextPosition, patrolSpeedFraction);
+            }
         }
 
+        /// <summary>
+        /// Tell the character what waypoint is it standing.
+        /// </summary>
+        /// <returns>The waypoint's position.</returns>
         private Vector3 GetCurrentWaypoint()
         {
             return patrolPath.GetWaypoint(currentWaypointIndex);
         }
 
+        /// <summary>
+        /// Whether character stands on the waypoint.
+        /// </summary>
+        /// <returns>
+        ///     True: Character stands on the waypoint. 
+        ///     False: Character is not stand on the waypoint.
+        /// </returns>
         private bool AtWaypoint()
         {
             return Vector3.Distance(transform.position,
                 GetCurrentWaypoint()) < waypointTolerance;
         }
 
+        /// <summary>
+        /// Get next waypoint's position.
+        /// </summary>
         private void CycleWaypoint()
         {
             currentWaypointIndex = patrolPath.GetNextIndex(currentWaypointIndex);
         }
 
+        /// <summary>
+        /// Enemy's attack behaviour.
+        /// </summary>
         private void AttackBehaviour()
         {
+            timeSinceLastSawPlayer = 0;
             fighter.Attack(player);
         }
 
+        /// <summary>
+        /// Character will stand still and do nothing.
+        /// </summary>
         private void SuspicionBehaviour()
         {
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }
 
+        /// <returns>
+        ///     The distance between character and player.
+        /// </returns>
         private bool InAttackRangeOfPlayer()
         {
             return Vector3.Distance(player.transform.position, transform.position)

@@ -7,6 +7,9 @@ using RPG.Core;
 
 namespace RPG.Combat
 {
+    /// <summary>
+    /// This class implements combat behaviour.
+    /// </summary>
     public class Fighter : MonoBehaviour, IAction
     {
         [SerializeField] float weaponRange = 2f;
@@ -27,13 +30,17 @@ namespace RPG.Combat
         private void Update()
         {
             timeSinceLastAttack += Time.deltaTime;
-            // This script works only works after having an attack target.
+            // This script only works after having an attack target,
+            // and this target is not dead.
             if (target == null || target.IsDead()) return;
             if (!GetIsInRange())
             {
-                mover.MoveTo(target.transform.position);
+                // If character is too far from target,
+                // it should move to the target at first.
+                mover.MoveTo(target.transform.position, 1f);
             }else
             {
+                // stop move and do attack behaviour.
                 mover.Cancel();
                 AttackBehaviour();
             }
@@ -60,6 +67,16 @@ namespace RPG.Combat
             GetComponent<Animator>().SetTrigger("attack");
         }
 
+        /// <summary>
+        ///
+        /// Define whether characters can do attack behaviour.
+        /// 
+        /// </summary>
+        /// <param name="combatTarget">Attack target</param>
+        /// <returns>
+        ///     True: characters can attack;
+        ///     False: characters can't attack.
+        /// </returns>
         public bool CanAttack(GameObject combatTarget)
         {
             if (combatTarget == null)
@@ -67,6 +84,7 @@ namespace RPG.Combat
                 return false;
             }
             Health targetToTest = combatTarget.GetComponent<Health>();
+            // Health component can tell us whether this character is dead.
             return (targetToTest != null) && !targetToTest.IsDead();
         }
 
@@ -123,6 +141,9 @@ namespace RPG.Combat
             target = null;
         }
 
+        /// <summary>
+        /// cancel the attack behaviour.
+        /// </summary>
         private void StopAttack()
         {
             GetComponent<Animator>().ResetTrigger("attack");
