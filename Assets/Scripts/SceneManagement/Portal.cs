@@ -14,14 +14,14 @@ namespace RPG.SceneManagement
          * Player cross portal A, then it will be teleported to Portal B
          * which have same identifier. 
          */
-        enum DestinationIdentifier
-        {
-            A, B, C, D
-        }
 
         [SerializeField] int sceneToLoad = -1;
         [SerializeField] Transform spawnPoint = null;
         [SerializeField] DestinationIdentifier destination;
+        [SerializeField] GameObject persistentObjectPrefab;
+        [SerializeField] float fadeOutTime = 1f;
+        [SerializeField] float fadeInTime = 2f;
+        [SerializeField] float fadeWaitTime = 0.5f;
 
         /// <summary>
         /// Trigger the portal.
@@ -52,10 +52,20 @@ namespace RPG.SceneManagement
              player should be teleported to.
              */
             DontDestroyOnLoad(gameObject);
+
+            Fader fader = FindObjectOfType<Fader>();
+
+            yield return fader.FadeOut(fadeOutTime);
             yield return SceneManager.LoadSceneAsync(sceneToLoad);
+
             Portal otherPortal = GetOtherPortal();
             UpdatePlayer(otherPortal);
+
+            yield return new WaitForSeconds(fadeWaitTime);
+            yield return fader.FadeIn(fadeInTime);
+
             Destroy(gameObject);
+
         }
 
         /// <summary>
@@ -86,8 +96,19 @@ namespace RPG.SceneManagement
         private void UpdatePlayer(Portal otherPortal)
         {
             GameObject player = GameObject.FindWithTag("Player");
-            player.GetComponent<NavMeshAgent>().Warp(otherPortal.spawnPoint.transform.position);
+            player.GetComponent<NavMeshAgent>().Warp(
+                otherPortal.spawnPoint.transform.position);
             player.transform.rotation = otherPortal.spawnPoint.transform.rotation;
+        }
+
+        public DestinationIdentifier GetDestination()
+        {
+            return this.destination;
+        }
+
+        public Transform GetSpawnPoint()
+        {
+            return this.spawnPoint;
         }
     }
 }

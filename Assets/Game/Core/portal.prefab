@@ -80,6 +80,8 @@ MonoBehaviour:
   sceneToLoad: 1
   spawnPoint: {fileID: 6112634918218925183}
   destination: 0
+  persistentObjectPrefab: {fileID: 1782609172571496542, guid: 0242f0593a09f48be8e28607d9e5c418,
+    type: 3}
 --- !u!1 &7914334374909716716
 GameObject:
   m_ObjectHideFlags: 0
