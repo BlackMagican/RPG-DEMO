@@ -1138,6 +1138,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: portal
       objectReference: {fileID: 0}
+    - target: {fileID: 1077038012112894387, guid: 36e3610d56aa64905a871b389efeb774,
+        type: 3}
+      propertyPath: m_Center.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1077038012112894387, guid: 36e3610d56aa64905a871b389efeb774,
+        type: 3}
+      propertyPath: m_Center.x
+      value: -0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 1077038012112894389, guid: 36e3610d56aa64905a871b389efeb774,
         type: 3}
       propertyPath: m_LocalPosition.x

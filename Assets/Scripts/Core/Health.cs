@@ -1,15 +1,31 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using RPG.Saving;
 
 namespace RPG.Core
 {
-    public class Health : MonoBehaviour
+    public class Health : MonoBehaviour, ISaveable
     {
         [SerializeField] float health = 100f;
 
         bool isDead = false;
+
+        public object CaptureState()
+        {
+            return this.health;
+        }
+
+        public void RestoreState(object state)
+        {
+            if (state is float health)
+            {
+                this.health = health;
+            }
+
+            if (this.health <= 0)
+            {
+                Die();
+            }
+        }
 
         public bool IsDead()
         {
