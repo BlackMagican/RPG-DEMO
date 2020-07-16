@@ -12,21 +12,22 @@ namespace RPG.Combat
     /// </summary>
     public class Fighter : MonoBehaviour, IAction
     {
-        [SerializeField] float weaponRange = 2f;
         // Player can't attack without interruption. 
         [SerializeField] float timeBetweenAttacks = 3f;
-        [SerializeField] float weaponDamage = 10f;
-        [SerializeField] GameObject weaponPrefab = null;
+        [SerializeField] float defaultDamage = 10f;
+        [SerializeField] Weapon defaultWeapon = null;
         [SerializeField] Transform handTransform = null;
+        [SerializeField] Health target = null;
+
 
         float timeSinceLastAttack = Mathf.Infinity;
-
-        [SerializeField] Health target = null;
+        Weapon currentWeapon = null;
         Mover mover;
 
         private void Start()
         {
             mover = GetComponent<Mover>();
+            EquipWeapon(defaultWeapon);
         }
 
         private void Update()
@@ -46,6 +47,24 @@ namespace RPG.Combat
                 // stop move and do attack behaviour.
                 mover.Cancel();
                 AttackBehaviour();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Equip player with new weapon. 
+        /// 
+        /// </summary>
+        /// <param name="weapon">
+        /// Weapon's type.
+        /// </param>
+        public void EquipWeapon(Weapon weapon)
+        {
+            if (weapon)
+            {
+                currentWeapon = weapon;
+                Animator animator = GetComponent<Animator>();
+                weapon.Spawn(handTransform, animator);
             }
         }
 
@@ -102,7 +121,15 @@ namespace RPG.Combat
             {
                 return;
             }
-            target.TakeDamage(weaponDamage);
+            if (defaultWeapon)
+            {
+                target.TakeDamage(currentWeapon.GetWeaponDamage());
+            }
+            else
+            {
+                target.TakeDamage(defaultDamage);
+            }
+
         }
 
         /// <summary>
@@ -111,13 +138,14 @@ namespace RPG.Combat
         /// 
         /// </summary>
         /// <returns>
-        /// true: player should stop false: player should move
+        ///     True: player should stop
+        ///     False: player should move
         /// </returns>
         private bool GetIsInRange()
         {
             return
                 Vector3.Distance(transform.position, target.transform.position)
-                < weaponRange;
+                < currentWeapon.GetWeaponRange();
         }
 
         /// <summary>
@@ -125,7 +153,11 @@ namespace RPG.Combat
         /// This method is used to change actions from others to attack.
         /// 
         /// </summary>
-        /// <param name="combatTarget">Enemy who fight with player</param>
+        /// <param name="combatTarget">
+        /// 
+        /// Enemy who fight with player
+        /// 
+        /// </param>
         public void Attack(GameObject combatTarget)
         {
             GetComponent<ActionScheduler>().StartAction(this);
