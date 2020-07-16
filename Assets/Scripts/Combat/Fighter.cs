@@ -16,6 +16,8 @@ namespace RPG.Combat
         // Player can't attack without interruption. 
         [SerializeField] float timeBetweenAttacks = 3f;
         [SerializeField] float weaponDamage = 10f;
+        [SerializeField] GameObject weaponPrefab = null;
+        [SerializeField] Transform handTransform = null;
 
         float timeSinceLastAttack = Mathf.Infinity;
 
@@ -38,7 +40,8 @@ namespace RPG.Combat
                 // If character is too far from target,
                 // it should move to the target at first.
                 mover.MoveTo(target.transform.position, 1f);
-            }else
+            }
+            else
             {
                 // stop move and do attack behaviour.
                 mover.Cancel();

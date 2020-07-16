@@ -1,4 +1,5 @@
-﻿using RPG.Core;
+﻿using System;
+using RPG.Core;
 using UnityEngine;
 using UnityEngine.AI;
 using RPG.Saving;
@@ -14,7 +15,7 @@ namespace RPG.Movement
         NavMeshAgent navMesh = null;
         Health health = null;
 
-        void Start()
+        void Awake()
         {
             navMesh = GetComponent<NavMeshAgent>();
             health = GetComponent<Health>();
@@ -24,6 +25,13 @@ namespace RPG.Movement
         {
             navMesh.enabled = !health.IsDead();
             UpdateAnimator();
+        }
+
+        [Serializable]
+        struct MoverSaveData
+        {
+            public SerializableVector3 position;
+            public SerializableVector3 rotation;
         }
 
         /// <summary>
@@ -80,15 +88,21 @@ namespace RPG.Movement
 
         public object CaptureState()
         {
-            return new SerializableVector3(transform.position);
+            MoverSaveData data = new MoverSaveData
+            {
+                position = new SerializableVector3(transform.position),
+                rotation = new SerializableVector3(transform.eulerAngles)
+            };
+            return data;
         }
 
         public void RestoreState(object state)
         {
-            if (state is SerializableVector3 position)
+            if (state is MoverSaveData data)
             {
                 GetComponent<NavMeshAgent>().enabled = false;
-                transform.position = position.ToVector();
+                transform.position = data.position.ToVector();
+                transform.eulerAngles = data.rotation.ToVector();
                 GetComponent<NavMeshAgent>().enabled = true;
             }
         }

@@ -3,13 +3,24 @@ using UnityEngine;
 
 public class Fader : MonoBehaviour
 {
-    CanvasGroup canvasGroup = null;
-    // Start is called before the first frame update
+    CanvasGroup canvasGroup;
+
     void Start()
     {
         canvasGroup = GetComponent<CanvasGroup>();
     }
 
+    public void FadeOutImmediate()
+    {
+        canvasGroup.alpha = 1;
+    }
+
+    /// <summary>
+    /// Make canvas cover the screen.
+    /// </summary>
+    /// <param name="time">
+    /// How long does it take to cover the screen.
+    /// </param>
     public IEnumerator FadeOut(float time)
     {
         while (canvasGroup.alpha < 1)
@@ -19,6 +30,12 @@ public class Fader : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Make canvas disappear.
+    /// </summary>
+    /// <param name="time">
+    /// How long does it take to show the screen.
+    /// </param>
     public IEnumerator FadeIn(float time)
     {
         while (canvasGroup.alpha > 0)

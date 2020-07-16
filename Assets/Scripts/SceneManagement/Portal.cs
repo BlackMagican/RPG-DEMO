@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
@@ -16,9 +15,8 @@ namespace RPG.SceneManagement
          */
 
         [SerializeField] int sceneToLoad = -1;
-        [SerializeField] Transform spawnPoint = null;
+        [SerializeField] Transform spawnPoint;
         [SerializeField] DestinationIdentifier destination;
-        [SerializeField] GameObject persistentObjectPrefab;
         [SerializeField] float fadeOutTime = 1f;
         [SerializeField] float fadeInTime = 2f;
         [SerializeField] float fadeWaitTime = 0.5f;
@@ -68,6 +66,8 @@ namespace RPG.SceneManagement
 
             Portal otherPortal = GetOtherPortal();
             UpdatePlayer(otherPortal);
+            // Resave player's infomation when changed scene.
+            wrapper.Save();
 
             yield return new WaitForSeconds(fadeWaitTime);
             yield return fader.FadeIn(fadeInTime);
@@ -108,16 +108,6 @@ namespace RPG.SceneManagement
             player.transform.position = otherPortal.spawnPoint.transform.position;
             player.transform.rotation = otherPortal.spawnPoint.transform.rotation;
             player.GetComponent<NavMeshAgent>().enabled = true;
-        }
-
-        public DestinationIdentifier GetDestination()
-        {
-            return this.destination;
-        }
-
-        public Transform GetSpawnPoint()
-        {
-            return this.spawnPoint;
         }
     }
 }
