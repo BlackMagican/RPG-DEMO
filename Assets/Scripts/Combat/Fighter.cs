@@ -16,16 +16,19 @@ namespace RPG.Combat
         [SerializeField] float timeBetweenAttacks = 3f;
         [SerializeField] float defaultDamage = 10f;
         [SerializeField] Weapon defaultWeapon = null;
-        [SerializeField] Transform handTransform = null;
+        [SerializeField] Transform rightHandTransform = null;
+        [SerializeField] Transform leftHandTransform = null;
         [SerializeField] Health target = null;
 
 
         float timeSinceLastAttack = Mathf.Infinity;
         Weapon currentWeapon = null;
+        private Animator animator = null;
         Mover mover;
 
         private void Start()
         {
+            animator = GetComponent<Animator>();
             mover = GetComponent<Mover>();
             EquipWeapon(defaultWeapon);
         }
@@ -33,9 +36,9 @@ namespace RPG.Combat
         private void Update()
         {
             timeSinceLastAttack += Time.deltaTime;
-            // This script only works after having an attack target,
+            // This script only works after having an attack target 
             // and this target is not dead.
-            if (target == null || target.IsDead()) return;
+            if (!target || target.IsDead()) return;
             if (!GetIsInRange())
             {
                 // If character is too far from target,
@@ -60,12 +63,9 @@ namespace RPG.Combat
         /// </param>
         public void EquipWeapon(Weapon weapon)
         {
-            if (weapon)
-            {
-                currentWeapon = weapon;
-                Animator animator = GetComponent<Animator>();
-                weapon.Spawn(handTransform, animator);
-            }
+            if (!weapon) return;
+            currentWeapon = weapon;
+            weapon.Spawn(rightHandTransform, leftHandTransform, animator);
         }
 
         private void AttackBehaviour()
@@ -85,8 +85,8 @@ namespace RPG.Combat
 
         public void TriggerAttack()
         {
-            GetComponent<Animator>().ResetTrigger("stopAttack");
-            GetComponent<Animator>().SetTrigger("attack");
+            animator.ResetTrigger("stopAttack");
+            animator.SetTrigger("attack");
         }
 
         /// <summary>
@@ -101,13 +101,13 @@ namespace RPG.Combat
         /// </returns>
         public bool CanAttack(GameObject combatTarget)
         {
-            if (combatTarget == null)
+            if (!combatTarget)
             {
                 return false;
             }
             Health targetToTest = combatTarget.GetComponent<Health>();
             // Health component can tell us whether this character is dead.
-            return (targetToTest != null) && !targetToTest.IsDead();
+            return (targetToTest && !targetToTest.IsDead());
         }
 
         /// <summary>
@@ -117,19 +117,30 @@ namespace RPG.Combat
         /// </summary>
         void Hit()
         {
-            if (target == null)
-            {
+            if (!target)
                 return;
-            }
-            if (defaultWeapon)
+
+            if (currentWeapon.HasProjectile())
             {
-                target.TakeDamage(currentWeapon.GetWeaponDamage());
+                currentWeapon.LaunchProjectile(rightHandTransform, 
+                    leftHandTransform, target);
             }
             else
             {
-                target.TakeDamage(defaultDamage);
+                if (currentWeapon)
+                {
+                    target.TakeDamage(currentWeapon.GetWeaponDamage());
+                }
+                else
+                {
+                    target.TakeDamage(defaultDamage);
+                }
             }
+        }
 
+        void Shoot()
+        {
+            Hit();
         }
 
         /// <summary>
@@ -181,8 +192,8 @@ namespace RPG.Combat
         /// </summary>
         private void StopAttack()
         {
-            GetComponent<Animator>().ResetTrigger("attack");
-            GetComponent<Animator>().SetTrigger("stopAttack");
+            animator.ResetTrigger("attack");
+            animator.SetTrigger("stopAttack");
         }
     }
 }

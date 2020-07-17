@@ -10,9 +10,10 @@ namespace RPG.Cinematics
     public class CinematicControlRemover : MonoBehaviour
     {
         GameObject player = null;
-        // Start is called before the first frame update
+
         void Start()
         {
+            /* PlayableDirector.played:  */
             GetComponent<PlayableDirector>().played += DisableControl;
             GetComponent<PlayableDirector>().stopped += EnableControl;
             player = GameObject.FindGameObjectWithTag("Player");
@@ -24,6 +25,10 @@ namespace RPG.Cinematics
             player.GetComponent<PlayerController>().enabled = false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pd"></param>
         void EnableControl(PlayableDirector pd)
         {
             player.GetComponent<PlayerController>().enabled = true;
