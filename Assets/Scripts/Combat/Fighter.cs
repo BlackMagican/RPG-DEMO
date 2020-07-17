@@ -12,14 +12,11 @@ namespace RPG.Combat
     /// </summary>
     public class Fighter : MonoBehaviour, IAction
     {
-        // Player can't attack without interruption. 
-        [SerializeField] float timeBetweenAttacks = 3f;
         [SerializeField] float defaultDamage = 10f;
         [SerializeField] Weapon defaultWeapon = null;
         [SerializeField] Transform rightHandTransform = null;
         [SerializeField] Transform leftHandTransform = null;
         [SerializeField] Health target = null;
-
 
         float timeSinceLastAttack = Mathf.Infinity;
         Weapon currentWeapon = null;
@@ -36,18 +33,20 @@ namespace RPG.Combat
         private void Update()
         {
             timeSinceLastAttack += Time.deltaTime;
-            // This script only works after having an attack target 
-            // and this target is not dead.
+            /* This script only works after having an attack target 
+             * and this target is not dead.
+             */
             if (!target || target.IsDead()) return;
             if (!GetIsInRange())
             {
-                // If character is too far from target,
-                // it should move to the target at first.
+                /* If character is too far from target,
+                 * it should move to the target at first.
+                 */
                 mover.MoveTo(target.transform.position, 1f);
             }
             else
             {
-                // stop move and do attack behaviour.
+                // Stop move and do attack behaviour.
                 mover.Cancel();
                 AttackBehaviour();
             }
@@ -70,14 +69,16 @@ namespace RPG.Combat
 
         private void AttackBehaviour()
         {
-            transform.LookAt(target.transform);
-            if (timeSinceLastAttack > timeBetweenAttacks)
+            transform.rotation = Quaternion.LookRotation(
+                target.transform.position - transform.position, 
+                Vector3.up);
+            if (timeSinceLastAttack > currentWeapon.GetTimeBetweenAttack())
             {
                 // This will trigger Hit() event.
                 TriggerAttack();
                 /*
-                    we have finished once attack,
-                    so we should set this variable to 0
+                    We have finished once attack,
+                    so we should set this variable to 0.
                  */
                 timeSinceLastAttack = 0f;
             }
@@ -112,35 +113,64 @@ namespace RPG.Combat
 
         /// <summary>
         /// 
-        /// Animation Events
+        /// Animation Events.
+        /// It will be called automatically.
         /// 
         /// </summary>
         void Hit()
         {
             if (!target)
                 return;
+            
+            if (currentWeapon)
+            {
+                if (!currentWeapon.HasProjectile() && 
+                    currentWeapon.hitEffect)
+                {
+                    Vector3 location = GetEffectLocation();
+                    Instantiate(currentWeapon.hitEffect, 
+                        location, transform.rotation);
+                }
+                target.TakeDamage(currentWeapon.GetWeaponDamage());
+            }
+            else
+            {
+                target.TakeDamage(defaultDamage);
+            }
+        }
 
+        /// <summary>
+        ///
+        /// To define where the hit effect should be generated.
+        /// 
+        /// </summary>
+        /// <returns>
+        ///    Where are the effect generated.
+        /// </returns>
+        private Vector3 GetEffectLocation()
+        {
+            CapsuleCollider targetCollider = target.GetComponent<CapsuleCollider>();
+            if (targetCollider)
+            {
+                return target.transform.position + 
+                       Vector3.up * targetCollider.height / 2;
+            }
+
+            return target.transform.position;
+        }
+
+        /// <summary>
+        /// 
+        ///  Another animation event which has same function as hit.
+        /// 
+        /// </summary>
+        void Shoot()
+        {
             if (currentWeapon.HasProjectile())
             {
                 currentWeapon.LaunchProjectile(rightHandTransform, 
                     leftHandTransform, target);
             }
-            else
-            {
-                if (currentWeapon)
-                {
-                    target.TakeDamage(currentWeapon.GetWeaponDamage());
-                }
-                else
-                {
-                    target.TakeDamage(defaultDamage);
-                }
-            }
-        }
-
-        void Shoot()
-        {
-            Hit();
         }
 
         /// <summary>
@@ -188,7 +218,9 @@ namespace RPG.Combat
         }
 
         /// <summary>
+        /// 
         /// cancel the attack behaviour.
+        /// 
         /// </summary>
         private void StopAttack()
         {

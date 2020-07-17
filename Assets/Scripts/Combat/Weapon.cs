@@ -3,16 +3,25 @@ using UnityEngine;
 
 namespace RPG.Combat
 {
+    /// <summary>
+    ///  Templates for all weapons.
+    /// </summary>
     [CreateAssetMenu(fileName = "Weapon", menuName = "RPG Project/Weapon", order = 0)]
     public class Weapon : ScriptableObject
     {
         [SerializeField] float weaponDamage = 20f;
         [SerializeField] float weaponRange = 2f;
+        // Player can't attack without interruption. 
+        [SerializeField] private float timeBetweenAttack = 1f;
         [SerializeField] GameObject equippedPrefab = null;
         [SerializeField] AnimatorOverrideController animatorOverride = null;
-        [SerializeField] private bool isRightHanded = true;
         [SerializeField] private Projectile projectile = null;
+        [SerializeField] private bool isRightHanded = true;
+        
+        public GameObject hitEffect = null;
 
+        private const string WeaponName = "Weapon";
+        
         /// <summary>
         /// 
         /// Create a new weapon for player.
@@ -35,10 +44,12 @@ namespace RPG.Combat
         /// </param>
         public void Spawn(Transform rightHand, Transform leftHand, Animator animator)
         {
+            DestroyOldWeapon(rightHand, leftHand);
             if (equippedPrefab)
             {
                 Transform handTransform = GetTransform(rightHand, leftHand);
-                Instantiate(equippedPrefab, handTransform);
+                GameObject weapon = Instantiate(equippedPrefab, handTransform);
+                weapon.name = WeaponName;
             }
             if (animatorOverride)
             {
@@ -46,6 +57,46 @@ namespace RPG.Combat
             }
         }
 
+        /// <summary>
+        ///
+        /// When equip a new weapon, should destroy old weapon at first.
+        /// 
+        /// </summary>
+        /// <param name="rightHand">
+        /// Character's right hand position.
+        /// </param>
+        /// <param name="leftHand">
+        /// Character's left hand position.
+        /// </param>
+        private void DestroyOldWeapon(Transform rightHand, Transform leftHand)
+        {
+            Transform oldWeapon = rightHand.Find(WeaponName);
+            if (!oldWeapon)
+            {
+                oldWeapon = leftHand.Find(WeaponName);
+            }
+            if (!oldWeapon)
+                return;
+            oldWeapon.name = "DESTROYING";
+            Destroy(oldWeapon.gameObject);
+        }
+
+        /// <summary>
+        /// 
+        /// Where the projectile should be launched.
+        /// 
+        /// </summary>
+        /// <param name="rightHand">
+        /// Character's right hand position.
+        /// </param>
+        /// <param name="leftHand">
+        /// Character's left hand position.
+        /// </param>
+        /// <returns>
+        ///     If this is a right-hand weapon,
+        ///     it will return to the right hand position
+        ///     otherwise return to the left hand position.
+        /// </returns>
         private Transform GetTransform(Transform rightHand, Transform leftHand)
         {
             Transform handTransform;
@@ -53,11 +104,35 @@ namespace RPG.Combat
             return handTransform;
         }
 
+        /// <summary>
+        ///
+        /// To check if this weapon has a projectile.
+        /// 
+        /// </summary>
+        /// <returns>
+        ///     True: It has a projectile.
+        ///     False: It doesn't have Projectile.
+        /// </returns>
         public bool HasProjectile()
         {
             return projectile != null;
         }
 
+        /// <summary>
+        ///
+        /// When called this method, it will launch this weapon's
+        /// Projectile.
+        /// 
+        /// </summary>
+        /// <param name="rightHand">
+        /// Character's right hand position.
+        /// </param>
+        /// <param name="leftHand">
+        /// Character's left hand position.
+        /// </param>
+        /// <param name="target">
+        /// Projectile point to.
+        /// </param>
         public void LaunchProjectile(Transform rightHand, 
             Transform leftHand, Health target)
         {
@@ -75,6 +150,11 @@ namespace RPG.Combat
         public float GetWeaponRange()
         {
             return weaponRange;
+        }
+
+        public float GetTimeBetweenAttack()
+        {
+            return timeBetweenAttack;
         }
     }
 }

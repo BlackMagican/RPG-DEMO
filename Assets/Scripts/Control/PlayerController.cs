@@ -37,7 +37,7 @@ namespace RPG.Control
         /// private bool InteractWithCombat -> Whether the player clicked enemy
         ///
         /// This will determine whether player clicked enemy. If the player
-        /// clicked an ememy, it will call the "Attack" method.
+        /// clicked an enemy, it will call the "Attack" method.
         /// 
         /// </summary>
         /// 
@@ -51,7 +51,7 @@ namespace RPG.Control
             {
                 CombatTarget target = hit.transform.GetComponent<CombatTarget>();
 
-                if ((target == null) ||
+                if ((!target) ||
                     !GetComponent<Fighter>().CanAttack(target.gameObject))
                 {
                     continue;
@@ -79,15 +79,12 @@ namespace RPG.Control
         private bool InteractWithMovement()
         {
             bool hasHit = Physics.Raycast(GetMouseRay(), out RaycastHit hit);
-            if (hasHit)
+            if (!hasHit) return false;
+            if (Input.GetMouseButton(1))
             {
-                if (Input.GetMouseButton(1))
-                {
-                    GetComponent<Mover>().StartMoveAction(hit.point, speedFraction);
-                }
-                return true;
+                GetComponent<Mover>().StartMoveAction(hit.point, speedFraction);
             }
-            return false;
+            return true;
         }
 
         /// <summary>
