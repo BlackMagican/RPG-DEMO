@@ -781,7 +781,7 @@ PrefabInstance:
     - target: {fileID: 769634968135966291, guid: 0b2ed47b5177a43eb94d494b69a3ea45,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.95675325
+      value: -0.9
       objectReference: {fileID: 0}
     - target: {fileID: 769634968135966291, guid: 0b2ed47b5177a43eb94d494b69a3ea45,
         type: 3}
@@ -832,6 +832,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Fireball Pickup
+      objectReference: {fileID: 0}
+    - target: {fileID: 3920885511361111908, guid: 0b2ed47b5177a43eb94d494b69a3ea45,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0b2ed47b5177a43eb94d494b69a3ea45, type: 3}
@@ -1345,6 +1350,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Bow Pickup
+      objectReference: {fileID: 0}
+    - target: {fileID: 8858438769360510341, guid: 1bb9dcbe8f9a142c4bf91b61a45dbd15,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1bb9dcbe8f9a142c4bf91b61a45dbd15, type: 3}
@@ -1989,16 +1999,26 @@ PrefabInstance:
       propertyPath: m_ScreenY
       value: 0.64
       objectReference: {fileID: 0}
+    - target: {fileID: 842553366399201670, guid: 291945c672a524a5e835e08da7801f2b,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1986376336604657347, guid: 291945c672a524a5e835e08da7801f2b,
         type: 3}
       propertyPath: defaultWeapon
       value: 
-      objectReference: {fileID: 11400000, guid: 25ccc7193873f49018fe11c6182b5869,
+      objectReference: {fileID: 11400000, guid: db153a8f111134d42874b25d0d951e8f,
         type: 2}
     - target: {fileID: 1986376336604657347, guid: 291945c672a524a5e835e08da7801f2b,
         type: 3}
       propertyPath: timeBetweenAttacks
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1986376336604657347, guid: 291945c672a524a5e835e08da7801f2b,
+        type: 3}
+      propertyPath: defaultWeaponName
+      value: Sword
       objectReference: {fileID: 0}
     - target: {fileID: 6182980612117273666, guid: 291945c672a524a5e835e08da7801f2b,
         type: 3}

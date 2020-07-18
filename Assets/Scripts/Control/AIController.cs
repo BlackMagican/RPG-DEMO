@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using RPG.Combat;
-using RPG.Core;
-using RPG.Movement;
+﻿using Combat;
+using Core;
+using Movement;
+using Resource;
 using UnityEngine;
 
-namespace RPG.Control
+namespace Control
 {
     /// <summary>
     /// This class implements enemy's behaviour.

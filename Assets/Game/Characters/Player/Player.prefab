@@ -177,6 +177,16 @@ PrefabInstance:
       propertyPath: rightHandTransform
       value: 
       objectReference: {fileID: 7435602785061799768}
+    - target: {fileID: 1832330364506138390, guid: 6f5cdd396a8e043b5bdcac0960a649fa,
+        type: 3}
+      propertyPath: characterClass
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1832330364506138390, guid: 6f5cdd396a8e043b5bdcac0960a649fa,
+        type: 3}
+      propertyPath: startingLevel
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 3230489446417275264, guid: 6f5cdd396a8e043b5bdcac0960a649fa,
         type: 3}
       propertyPath: uniqueIdentifier

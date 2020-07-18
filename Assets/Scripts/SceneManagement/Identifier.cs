@@ -1,4 +1,7 @@
-﻿public enum DestinationIdentifier
+﻿namespace SceneManagement
 {
-    A, B, C, D
+    public enum DestinationIdentifier
+    {
+        A, B, C, D
+    }
 }

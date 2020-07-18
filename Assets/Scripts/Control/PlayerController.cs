@@ -1,10 +1,9 @@
-﻿using System;
-using RPG.Combat;
-using RPG.Core;
-using RPG.Movement;
+﻿using Combat;
+using Movement;
+using Resource;
 using UnityEngine;
 
-namespace RPG.Control
+namespace Control
 {
     /// <summary>
     ///
@@ -14,11 +13,15 @@ namespace RPG.Control
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] float speedFraction = 1f;
-        Health health;
+        Health health = null;
+        private Mover mover = null;
+        private Fighter fighter = null;
 
-        private void Start()
+        private void Awake()
         {
             health = GetComponent<Health>();
+            mover = GetComponent<Mover>();
+            fighter = GetComponent<Fighter>();
         }
 
         void Update()
@@ -52,14 +55,14 @@ namespace RPG.Control
                 CombatTarget target = hit.transform.GetComponent<CombatTarget>();
 
                 if ((!target) ||
-                    !GetComponent<Fighter>().CanAttack(target.gameObject))
+                    !fighter.CanAttack(target.gameObject))
                 {
                     continue;
                 }
 
                 if (Input.GetMouseButtonDown(1))
                 {
-                    GetComponent<Fighter>().Attack(target.gameObject);
+                    fighter.Attack(target.gameObject);
                 }
                 return true;
             }
@@ -74,7 +77,7 @@ namespace RPG.Control
         /// </summary>
         /// 
         /// <returns>
-        /// Returns whetcher player clicked on a moveable location.
+        /// Returns whether player clicked on a moveable location.
         /// </returns>
         private bool InteractWithMovement()
         {
@@ -82,7 +85,7 @@ namespace RPG.Control
             if (!hasHit) return false;
             if (Input.GetMouseButton(1))
             {
-                GetComponent<Mover>().StartMoveAction(hit.point, speedFraction);
+                mover.StartMoveAction(hit.point, speedFraction);
             }
             return true;
         }

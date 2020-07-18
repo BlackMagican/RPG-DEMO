@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace RPG.Core
+namespace Core
 {
     /// <summary>
     /// This class is a bridge which handling interactions between actions.

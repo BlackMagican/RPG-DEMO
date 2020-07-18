@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Cinemachine;
 using UnityEngine;
-using UnityEngine.Playables;
-using Cinemachine;
 
-namespace RPG.Core
+namespace Core
 {
     public class FollowCamera : MonoBehaviour
     {
@@ -30,22 +26,22 @@ namespace RPG.Core
 
             if (Input.mousePosition.y >= Screen.height * topBarrier)
             {
-                transform.Translate(Vector3.forward * Time.deltaTime * scrollSpeed, Space.World);
+                transform.Translate(Vector3.forward * (Time.deltaTime * scrollSpeed), Space.World);
             }
 
             if (Input.mousePosition.y <= Screen.height * botBarrier)
             {
-                transform.Translate(Vector3.forward * Time.deltaTime * -scrollSpeed, Space.World);
+                transform.Translate(Vector3.forward * (Time.deltaTime * -scrollSpeed), Space.World);
             }
 
             if (Input.mousePosition.x >= Screen.width * rightBarrier)
             {
-                transform.Translate(Vector3.right * Time.deltaTime * scrollSpeed, Space.World);
+                transform.Translate(Vector3.right * (Time.deltaTime * scrollSpeed), Space.World);
             }
 
             if (Input.mousePosition.x <= Screen.width * leftBarrier)
             {
-                transform.Translate(Vector3.right * Time.deltaTime * -scrollSpeed, Space.World);
+                transform.Translate(Vector3.right * (Time.deltaTime * -scrollSpeed), Space.World);
             }
             //transform.position = target.position;
             ScreenZoom();

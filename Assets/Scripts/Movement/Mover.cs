@@ -1,10 +1,11 @@
 ﻿using System;
-using RPG.Core;
+using Core;
+using Resource;
+using Saving;
 using UnityEngine;
 using UnityEngine.AI;
-using RPG.Saving;
 
-namespace RPG.Movement
+namespace Movement
 {
     /// <summary>
     /// This class will handel player's move behavior
@@ -47,10 +48,13 @@ namespace RPG.Movement
         }
 
         /// <summary>
-        ///
-        /// Move the player to where they want to go.
+        /// 
+        /// Move the Character to where they want to go.
         /// 
         /// </summary>
+        /// <param name="destination">
+        /// Character's destination.
+        /// </param>
         /// <param name="speedFraction">
         /// Determine the speed when characters move.
         /// </param>
@@ -81,7 +85,8 @@ namespace RPG.Movement
              * Change the velocity to local velocity.
              * Then we can get the speed which the player runs forward.
              */
-            Vector3 localVelocity = transform.InverseTransformDirection(velocity);
+            Vector3 localVelocity = 
+                transform.InverseTransformDirection(velocity);
             float speed = localVelocity.z;
             GetComponent<Animator>().SetFloat("ForwardSpeed", speed);
         }

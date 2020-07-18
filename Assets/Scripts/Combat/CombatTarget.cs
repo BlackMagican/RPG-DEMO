@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using RPG.Core;
+﻿using Resource;
 using UnityEngine;
 
-namespace RPG.Combat
+namespace Combat
 {
     [RequireComponent(typeof(Health))]
     public class CombatTarget : MonoBehaviour

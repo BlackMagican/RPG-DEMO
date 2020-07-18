@@ -188,6 +188,7 @@ MonoBehaviour:
   isHoming: 0
   hitEffect: {fileID: 3870099573815444905, guid: fc02c563c24fd425780c705710b3aa50,
     type: 3}
+  clip: {fileID: 7400000, guid: 24d693751e9fd0b42ba8f9595d8b5f5e, type: 3}
   destroyOnHit:
   - {fileID: 518608153276837024}
   maxFlightTime: 2

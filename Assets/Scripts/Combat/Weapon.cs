@@ -1,7 +1,8 @@
-﻿using RPG.Core;
+﻿using System;
+using Resource;
 using UnityEngine;
 
-namespace RPG.Combat
+namespace Combat
 {
     /// <summary>
     ///  Templates for all weapons.
@@ -21,7 +22,7 @@ namespace RPG.Combat
         public GameObject hitEffect = null;
 
         private const string WeaponName = "Weapon";
-        
+
         /// <summary>
         /// 
         /// Create a new weapon for player.
@@ -51,9 +52,16 @@ namespace RPG.Combat
                 GameObject weapon = Instantiate(equippedPrefab, handTransform);
                 weapon.name = WeaponName;
             }
+            
+            // Change the character's attack animation.
+            var overrideController = 
+                animator.runtimeAnimatorController as AnimatorOverrideController;
             if (animatorOverride)
             {
                 animator.runtimeAnimatorController = animatorOverride;
+            }else if (overrideController != null)
+            {
+                animator.runtimeAnimatorController = overrideController.runtimeAnimatorController;
             }
         }
 
@@ -70,6 +78,7 @@ namespace RPG.Combat
         /// </param>
         private void DestroyOldWeapon(Transform rightHand, Transform leftHand)
         {
+            // Find the old weapon at first.
             Transform oldWeapon = rightHand.Find(WeaponName);
             if (!oldWeapon)
             {

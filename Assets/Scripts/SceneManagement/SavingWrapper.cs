@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
+using Saving;
 using UnityEngine;
-using RPG.Saving;
-namespace RPG.SceneManagement
+
+namespace SceneManagement
 {
     public class SavingWrapper : MonoBehaviour
     {

@@ -1,30 +1,21 @@
-﻿using UnityEngine;
-using RPG.Saving;
+﻿using Core;
+using Saving;
+using Stats;
+using UnityEngine;
 
-namespace RPG.Core
+namespace Resource
 {
     public class Health : MonoBehaviour, ISaveable
     {
         [SerializeField] float health = 100f;
+        private float fullHealth = 0f;
 
         bool isDead = false;
 
-        public object CaptureState()
+        private void Start()
         {
-            return this.health;
-        }
-
-        public void RestoreState(object state)
-        {
-            if (state is float health)
-            {
-                this.health = health;
-            }
-
-            if (this.health <= 0)
-            {
-                Die();
-            }
+            this.health = GetComponent<BaseStats>().GetHealth();
+            fullHealth = health;
         }
 
         public bool IsDead()
@@ -47,6 +38,11 @@ namespace RPG.Core
             }
         }
 
+        public float GetPercentage()
+        {
+            return 100 * health / fullHealth;
+        }
+
         /// <summary>
         ///
         /// Character's behavior after death.
@@ -61,6 +57,24 @@ namespace RPG.Core
             isDead = true;
             GetComponent<Animator>().SetTrigger("die");
             GetComponent<ActionScheduler>().CancelCurrentAction();
+        }
+        
+        public object CaptureState()
+        {
+            return this.health;
+        }
+
+        public void RestoreState(object state)
+        {
+            if (state is float health)
+            {
+                this.health = health;
+            }
+
+            if (this.health <= 0)
+            {
+                Die();
+            }
         }
     }
 }

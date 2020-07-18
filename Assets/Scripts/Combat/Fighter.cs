@@ -1,16 +1,16 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using Core;
+using Movement;
+using Resource;
+using Saving;
 using UnityEngine;
-using RPG.Movement;
-using System;
-using RPG.Core;
 
-namespace RPG.Combat
+namespace Combat
 {
     /// <summary>
     /// This class implements combat behaviour.
     /// </summary>
-    public class Fighter : MonoBehaviour, IAction
+    public class Fighter : MonoBehaviour, IAction, ISaveable
     {
         [SerializeField] float defaultDamage = 10f;
         [SerializeField] Weapon defaultWeapon = null;
@@ -22,12 +22,20 @@ namespace RPG.Combat
         Weapon currentWeapon = null;
         private Animator animator = null;
         Mover mover;
-
-        private void Start()
+        
+        // 将 Get Component 放在 Awake 里可以避免出现捕获不到组件的问题
+        private void Awake()
         {
             animator = GetComponent<Animator>();
             mover = GetComponent<Mover>();
-            EquipWeapon(defaultWeapon);
+        }
+
+        private void Start()
+        {
+            if (!currentWeapon)
+            {
+                EquipWeapon(defaultWeapon);
+            }
         }
 
         private void Update()
@@ -155,7 +163,6 @@ namespace RPG.Combat
                 return target.transform.position + 
                        Vector3.up * targetCollider.height / 2;
             }
-
             return target.transform.position;
         }
 
@@ -226,6 +233,20 @@ namespace RPG.Combat
         {
             animator.ResetTrigger("attack");
             animator.SetTrigger("stopAttack");
+        }
+
+        public object CaptureState()
+        {
+            return currentWeapon.name;
+        }
+
+        public void RestoreState(object state)
+        {
+            if (state is string weaponName)
+            {
+                Weapon weapon = UnityEngine.Resources.Load<Weapon>(weaponName);
+                EquipWeapon(weapon);
+            }
         }
     }
 }

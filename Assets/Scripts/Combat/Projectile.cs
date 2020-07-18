@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using RPG.Core;
+﻿using Resource;
 using UnityEngine;
 
-namespace RPG.Combat
+namespace Combat
 {
     public class Projectile : MonoBehaviour
     {
@@ -29,7 +25,8 @@ namespace RPG.Combat
         {
             if (!target)
             {
-                return;
+                Destroy(gameObject);
+                //return;
             }
 
             // Some weapon may has chase function.
@@ -47,6 +44,8 @@ namespace RPG.Combat
             this.damage = damage;
             Destroy(gameObject, maxFlightTime);
         }
+
+
 
         /// <summary>
         /// 
