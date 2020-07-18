@@ -14,7 +14,7 @@ namespace Resource
 
         private void Start()
         {
-            this.health = GetComponent<BaseStats>().GetHealth();
+            this.health = GetComponent<BaseStats>().GetStat(Stat.Health);
             fullHealth = health;
         }
 
@@ -24,17 +24,23 @@ namespace Resource
         }
 
         /// <summary>
-        ///
+        /// 
         /// Decrease character's health.
         /// 
         /// </summary>
-        /// <param name="damage">Reduced value</param>
-        public void TakeDamage(float damage)
+        /// <param name="instigator">
+        /// Who launch an attack.
+        /// </param>
+        /// <param name="damage">
+        /// Reduced value
+        /// </param>
+        public void TakeDamage(GameObject instigator, float damage)
         {
             health = Mathf.Max(health - damage, 0f);
             if (health <= 0)
             {
                 Die();
+                AwardExperience(instigator);
             }
         }
 
@@ -58,7 +64,19 @@ namespace Resource
             GetComponent<Animator>().SetTrigger("die");
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }
-        
+
+        private void AwardExperience(GameObject instigator)
+        {
+            Experience exp = instigator.GetComponent<Experience>();
+            if (!exp)
+            {
+                return;
+            }
+
+            exp.GainExperience(
+                GetComponent<BaseStats>().GetStat(Stat.ExperienceReward));
+        }
+
         public object CaptureState()
         {
             return this.health;

@@ -128,7 +128,7 @@ namespace Combat
         }
 
         /// <summary>
-        ///
+        /// 
         /// When called this method, it will launch this weapon's
         /// Projectile.
         /// 
@@ -142,13 +142,16 @@ namespace Combat
         /// <param name="target">
         /// Projectile point to.
         /// </param>
+        /// <param name="instigator">
+        /// Who launch an attack.
+        /// </param>
         public void LaunchProjectile(Transform rightHand, 
-            Transform leftHand, Health target)
+            Transform leftHand, Health target, GameObject instigator)
         {
             Projectile projectileInstance =
                 Instantiate(projectile, 
                     GetTransform(rightHand, leftHand).position, Quaternion.identity);
-            projectileInstance.SetTarget(target, weaponDamage);
+            projectileInstance.SetTarget(target, instigator, weaponDamage);
         }
         
         public float GetWeaponDamage()

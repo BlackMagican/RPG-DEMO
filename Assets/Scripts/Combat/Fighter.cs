@@ -123,6 +123,19 @@ namespace Combat
         /// 
         /// Animation Events.
         /// It will be called automatically.
+        ///
+        /// ********************************************************
+        ///     About Instigator                                   *
+        ///  instigator is the character who launch the attack.    *
+        ///  1. From Fighter.Hit() ----> Health.TakeDamage()       *
+        ///                                                        *
+        ///  If the combat target is killed                        *
+        ///     Instigator will gain Experience from combat target.*
+        ///                                                        *
+        ///  2. From Fighter.Shoot() --> Weapon.LaunchProjectile() *
+        ///  From LaunchProjectile() --> Projectile.SetTarget()    *
+        ///  From Projectile --> Health.TakeDamage()               *
+        /// ********************************************************
         /// 
         /// </summary>
         void Hit()
@@ -139,11 +152,14 @@ namespace Combat
                     Instantiate(currentWeapon.hitEffect, 
                         location, transform.rotation);
                 }
-                target.TakeDamage(currentWeapon.GetWeaponDamage());
+                target.TakeDamage(gameObject, 
+                    currentWeapon.GetWeaponDamage());
             }
             else
             {
-                target.TakeDamage(defaultDamage);
+                // If character doesn't have weapon,
+                // it does damage by default value.
+                target.TakeDamage(gameObject, defaultDamage);
             }
         }
 
@@ -176,7 +192,7 @@ namespace Combat
             if (currentWeapon.HasProjectile())
             {
                 currentWeapon.LaunchProjectile(rightHandTransform, 
-                    leftHandTransform, target);
+                    leftHandTransform, target, gameObject);
             }
         }
 
@@ -234,6 +250,8 @@ namespace Combat
             animator.ResetTrigger("attack");
             animator.SetTrigger("stopAttack");
         }
+
+        public Health Target => target;
 
         public object CaptureState()
         {

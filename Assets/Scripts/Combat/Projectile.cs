@@ -14,6 +14,7 @@ namespace Combat
         [SerializeField] private float lifeAfterImpact = 0.3f;
         
         private Health target = null;
+        private GameObject instigator = null;
         private float damage = 0f;
 
         private void Start()
@@ -38,10 +39,11 @@ namespace Combat
                                 (speed * Time.deltaTime));
         }
 
-        public void SetTarget(Health target, float damage)
+        public void SetTarget(Health target, GameObject instigator, float damage)
         {
             this.target = target;
             this.damage = damage;
+            this.instigator = instigator;
             Destroy(gameObject, maxFlightTime);
         }
 
@@ -86,7 +88,7 @@ namespace Combat
                 Instantiate(hitEffect, GetAimLocation(), 
                     transform.rotation);
             }
-            target.TakeDamage(damage);
+            target.TakeDamage(instigator, damage);
 
             /*
              * Let hit effect finish.
