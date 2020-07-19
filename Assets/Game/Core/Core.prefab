@@ -117,7 +117,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6182980612242628531}
   m_LocalRotation: {x: 0.26621693, y: -0.62419426, z: 0.25567737, w: 0.68857765}
-  m_LocalPosition: {x: 45.24267, y: 9.709694, z: -42.58534}
+  m_LocalPosition: {x: 46.338943, y: 8.544443, z: -42.661316}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6182980612988073640}
@@ -223,7 +223,7 @@ MonoBehaviour:
   m_ZDamping: 1
   m_TargetMovementOnly: 0
   m_ScreenX: 0.5
-  m_ScreenY: 0.77
+  m_ScreenY: 0.64
   m_CameraDistance: 10.67
   m_DeadZoneWidth: 0
   m_DeadZoneHeight: 0
@@ -405,22 +405,17 @@ PrefabInstance:
     - target: {fileID: 1760230005838711989, guid: c3da42fa9e09c4f2a84d5e4916e90952,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 97.3
+      value: 85.90001
       objectReference: {fileID: 0}
     - target: {fileID: 1760230005838711989, guid: c3da42fa9e09c4f2a84d5e4916e90952,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -27.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2924692067889662660, guid: c3da42fa9e09c4f2a84d5e4916e90952,
-        type: 3}
-      propertyPath: m_FontData.m_FontSize
-      value: 20
+      value: -25.100014
       objectReference: {fileID: 0}
     - target: {fileID: 2924692067889662660, guid: c3da42fa9e09c4f2a84d5e4916e90952,
         type: 3}
       propertyPath: m_FontData.m_MinSize
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2924692067889662660, guid: c3da42fa9e09c4f2a84d5e4916e90952,
         type: 3}
@@ -552,10 +547,25 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6834115193834359294, guid: c3da42fa9e09c4f2a84d5e4916e90952,
+        type: 3}
+      propertyPath: m_FontData.m_Alignment
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6844361496678982970, guid: c3da42fa9e09c4f2a84d5e4916e90952,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 139.8
+      objectReference: {fileID: 0}
     - target: {fileID: 6927977731900167216, guid: c3da42fa9e09c4f2a84d5e4916e90952,
         type: 3}
       propertyPath: m_Name
       value: HUD
+      objectReference: {fileID: 0}
+    - target: {fileID: 7042578588625772825, guid: c3da42fa9e09c4f2a84d5e4916e90952,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 139.8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c3da42fa9e09c4f2a84d5e4916e90952, type: 3}
@@ -572,6 +582,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6182980613592347431}
     m_Modifications:
+    - target: {fileID: 3228653685333367370, guid: 2a322b34b77e3464a829d3c5fa50a16b,
+        type: 3}
+      propertyPath: health
+      value: 500
+      objectReference: {fileID: 0}
     - target: {fileID: 6564403655748077560, guid: 2a322b34b77e3464a829d3c5fa50a16b,
         type: 3}
       propertyPath: m_LocalPosition.x
