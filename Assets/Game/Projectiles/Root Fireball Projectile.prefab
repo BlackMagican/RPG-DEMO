@@ -4861,9 +4861,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 15
   isHoming: 0
-  hitEffect: {fileID: 2302457091093092515, guid: 69d1b1037536b504884c93bb73d662db,
-    type: 3}
-  clip: {fileID: 7400000, guid: 6225a58c8d4165e42b647612da98e223, type: 3}
+  hitEffect: {fileID: 199484, guid: bf27844d805522447933dc21e304c99b, type: 3}
   destroyOnHit:
   - {fileID: 2682407213212272838}
   maxFlightTime: 2

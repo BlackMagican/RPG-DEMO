@@ -26,7 +26,8 @@ namespace UI
             }
 
             Health health = fighter.Target;
-            healthValue.text = String.Format("{0:0.0}%", health.GetPercentage());
+            //healthValue.text = String.Format("{0:0.0}%", health.GetPercentage());
+            healthValue.text = String.Format("{0:0} / {1:0}", health.Health1, health.FullHealth);
         }
     }
 }

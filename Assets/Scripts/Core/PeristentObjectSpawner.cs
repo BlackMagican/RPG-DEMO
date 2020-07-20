@@ -4,16 +4,16 @@ namespace Core
 {
     public class PeristentObjectSpawner : MonoBehaviour
     {
-        [SerializeField] GameObject persistentObjectPrefab;
+        [SerializeField] GameObject persistentObjectPrefab = null;
 
         static bool hasSpawned = false;
 
         private void Awake()
         {
-            if (hasSpawned) return;
-
+            if (hasSpawned) 
+                return;
             SpawnPersistentObjects();
-
+            
             hasSpawned = true;
         }
 

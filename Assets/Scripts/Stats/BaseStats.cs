@@ -9,20 +9,58 @@ namespace Stats
         [SerializeField] private int startingLevel = 1;
         [SerializeField] private CharacterClass characterClass;
         [SerializeField] private Progression progression = null;
+        [SerializeField] private GameObject levelUpParticleEffect = null;
         private Experience experience;
+
+        public event Action OnLevelUp;
+
+        private int currentLevel = 0;
 
         private void Awake()
         {
             experience = GetComponent<Experience>();
         }
 
+        private void Start()
+        {
+            currentLevel = CalculateLevel();
+            if (experience)
+            {
+                experience.onExpGained += UpdateLevel;
+            }
+        }
+
+        private void UpdateLevel()
+        {
+            int newLevel = CalculateLevel();
+            if (newLevel > currentLevel)
+            {
+                currentLevel = newLevel;
+                LevelUpEffect();
+                if (OnLevelUp != null) 
+                    OnLevelUp();
+            }
+        }
+
+        private void LevelUpEffect()
+        {
+            Instantiate(levelUpParticleEffect, transform);
+        }
+
         public float GetStat(Stat stat)
         {
             return progression.GetStat(stat, 
-                characterClass, startingLevel);
+                characterClass, GetLevel());
         }
 
         public int GetLevel()
+        {
+            if (currentLevel < 1)
+                currentLevel = CalculateLevel();
+            return currentLevel;
+        }
+
+        public int CalculateLevel()
         {
             if (!experience)
                 return startingLevel;

@@ -43,19 +43,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speedFraction: 1
---- !u!114 &3228653685333367370
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6564403655748077564}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f44b4e571c2424e0f9942d92fa6d7871, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  health: 50
 --- !u!114 &1765235442228683878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69,6 +56,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   experiencePoint: 0
+--- !u!114 &3228653685333367370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6564403655748077564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f44b4e571c2424e0f9942d92fa6d7871, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6366105600778698226
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -200,6 +199,12 @@ PrefabInstance:
       propertyPath: startingLevel
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 1832330364506138390, guid: 6f5cdd396a8e043b5bdcac0960a649fa,
+        type: 3}
+      propertyPath: levelUpParticleEffect
+      value: 
+      objectReference: {fileID: 1777747000122577692, guid: 11fd4299a8391415288c34dfc5f03d58,
+        type: 3}
     - target: {fileID: 3230489446417275264, guid: 6f5cdd396a8e043b5bdcac0960a649fa,
         type: 3}
       propertyPath: uniqueIdentifier

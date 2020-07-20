@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using Core;
+﻿using Core;
 using Movement;
 using Resource;
 using Saving;
+using Stats;
 using UnityEngine;
 
 namespace Combat
@@ -13,14 +13,15 @@ namespace Combat
     public class Fighter : MonoBehaviour, IAction, ISaveable
     {
         [SerializeField] float defaultDamage = 10f;
-        [SerializeField] Weapon defaultWeapon = null;
-        [SerializeField] Transform rightHandTransform = null;
-        [SerializeField] Transform leftHandTransform = null;
-        [SerializeField] Health target = null;
+        [SerializeField] Weapon defaultWeapon;
+        [SerializeField] Transform rightHandTransform;
+        [SerializeField] Transform leftHandTransform;
+        [SerializeField] Health target;
 
         float timeSinceLastAttack = Mathf.Infinity;
-        Weapon currentWeapon = null;
-        private Animator animator = null;
+        Weapon currentWeapon;
+        private BaseStats stats;
+        private Animator animator;
         Mover mover;
         
         // 将 Get Component 放在 Awake 里可以避免出现捕获不到组件的问题
@@ -28,6 +29,7 @@ namespace Combat
         {
             animator = GetComponent<Animator>();
             mover = GetComponent<Mover>();
+            stats = GetComponent<BaseStats>();
         }
 
         private void Start()
@@ -153,13 +155,13 @@ namespace Combat
                         location, transform.rotation);
                 }
                 target.TakeDamage(gameObject, 
-                    currentWeapon.GetWeaponDamage());
+                   GetCalculatedDamage());
             }
             else
             {
                 // If character doesn't have weapon,
                 // it does damage by default value.
-                target.TakeDamage(gameObject, defaultDamage);
+                target.TakeDamage(gameObject, GetCalculatedDamage());
             }
         }
 
@@ -192,8 +194,14 @@ namespace Combat
             if (currentWeapon.HasProjectile())
             {
                 currentWeapon.LaunchProjectile(rightHandTransform, 
-                    leftHandTransform, target, gameObject);
+                    leftHandTransform, target, gameObject, GetCalculatedDamage());
             }
+        }
+
+        private float GetCalculatedDamage()
+        {
+            float damage = stats.GetStat(Stat.BaseDamage);
+            return damage;
         }
 
         /// <summary>
@@ -262,7 +270,7 @@ namespace Combat
         {
             if (state is string weaponName)
             {
-                Weapon weapon = UnityEngine.Resources.Load<Weapon>(weaponName);
+                Weapon weapon = Resources.Load<Weapon>(weaponName);
                 EquipWeapon(weapon);
             }
         }

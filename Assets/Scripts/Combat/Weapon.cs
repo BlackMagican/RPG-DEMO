@@ -146,12 +146,12 @@ namespace Combat
         /// Who launch an attack.
         /// </param>
         public void LaunchProjectile(Transform rightHand, 
-            Transform leftHand, Health target, GameObject instigator)
+            Transform leftHand, Health target, GameObject instigator, float calculateDamage)
         {
             Projectile projectileInstance =
                 Instantiate(projectile, 
                     GetTransform(rightHand, leftHand).position, Quaternion.identity);
-            projectileInstance.SetTarget(target, instigator, weaponDamage);
+            projectileInstance.SetTarget(target, instigator, calculateDamage);
         }
         
         public float GetWeaponDamage()

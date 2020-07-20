@@ -7,15 +7,20 @@ namespace Resource
 {
     public class Health : MonoBehaviour, ISaveable
     {
-        [SerializeField] float health = 100f;
+        [SerializeField] private float reGenerationPercentage = 80;
+        float health = -1f;
         private float fullHealth = 0f;
 
         bool isDead = false;
 
         private void Start()
         {
-            this.health = GetComponent<BaseStats>().GetStat(Stat.Health);
-            fullHealth = health;
+            GetComponent<BaseStats>().OnLevelUp += ReGenerateHealth;
+            if (health < 0)
+            {
+                health = GetComponent<BaseStats>().GetStat(Stat.Health);
+                fullHealth = health;
+            }
         }
 
         public bool IsDead()
@@ -36,6 +41,7 @@ namespace Resource
         /// </param>
         public void TakeDamage(GameObject instigator, float damage)
         {
+            print(gameObject.name + "took damage: " + damage);
             health = Mathf.Max(health - damage, 0f);
             if (health <= 0)
             {
@@ -43,11 +49,25 @@ namespace Resource
                 AwardExperience(instigator);
             }
         }
-
+        
         public float GetPercentage()
         {
             return 100 * health / fullHealth;
         }
+        
+        private void ReGenerateHealth()
+        {
+            float lastLevelHealthPoint = GetPercentage();
+            fullHealth = GetComponent<BaseStats>().GetStat(Stat.Health);
+            float reSetPoint = Mathf.Max(lastLevelHealthPoint, 
+                reGenerationPercentage);
+            health = (reSetPoint * fullHealth) / 100;
+
+        }
+
+        public float FullHealth => fullHealth;
+
+        public float Health1 => health;
 
         /// <summary>
         ///
@@ -76,6 +96,8 @@ namespace Resource
             exp.GainExperience(
                 GetComponent<BaseStats>().GetStat(Stat.ExperienceReward));
         }
+        
+
 
         public object CaptureState()
         {
@@ -84,12 +106,12 @@ namespace Resource
 
         public void RestoreState(object state)
         {
-            if (state is float health)
+            if (state is float healthPoint)
             {
-                this.health = health;
+                health = healthPoint;
             }
 
-            if (this.health <= 0)
+            if (health <= 0)
             {
                 Die();
             }

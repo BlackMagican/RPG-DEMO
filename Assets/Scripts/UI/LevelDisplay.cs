@@ -20,7 +20,7 @@ namespace UI
 
         private void Update()
         {
-            levelValue.text = String.Format("{0:0}", level.GetLevel());
+            levelValue.text = String.Format("{0:0}", level.CalculateLevel());
         }
     }
 }

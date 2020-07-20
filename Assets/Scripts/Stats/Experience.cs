@@ -1,4 +1,5 @@
-﻿using Saving;
+﻿using System;
+using Saving;
 using UnityEngine;
 
 namespace Stats
@@ -7,9 +8,13 @@ namespace Stats
     {
         [SerializeField] private float experiencePoint;
 
+        public event Action onExpGained;
+
         public void GainExperience(float experience)
         {
             experiencePoint += experience;
+            if (onExpGained != null) 
+                onExpGained();
         }
 
         public float ExperiencePoint => experiencePoint;

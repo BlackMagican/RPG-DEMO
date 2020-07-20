@@ -20,7 +20,7 @@ PrefabInstance:
     - target: {fileID: 2302457091073469191, guid: 69d1b1037536b504884c93bb73d662db,
         type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 0.2
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 2302457091073469191, guid: 69d1b1037536b504884c93bb73d662db,
         type: 3}
@@ -87,6 +87,41 @@ PrefabInstance:
       propertyPath: ColorModule.gradient.maxGradient.m_NumColorKeys
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2302457091073469191, guid: 69d1b1037536b504884c93bb73d662db,
+        type: 3}
+      propertyPath: lengthInSec
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302457091073469191, guid: 69d1b1037536b504884c93bb73d662db,
+        type: 3}
+      propertyPath: InitialModule.startLifetime.minScalar
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302457091073469191, guid: 69d1b1037536b504884c93bb73d662db,
+        type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302457091073469191, guid: 69d1b1037536b504884c93bb73d662db,
+        type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302457091073469191, guid: 69d1b1037536b504884c93bb73d662db,
+        type: 3}
+      propertyPath: ShapeModule.angle
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302457091073469191, guid: 69d1b1037536b504884c93bb73d662db,
+        type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302457091073498935, guid: 69d1b1037536b504884c93bb73d662db,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
     - target: {fileID: 2302457091092795123, guid: 69d1b1037536b504884c93bb73d662db,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -145,22 +180,22 @@ PrefabInstance:
     - target: {fileID: 2302457091092795123, guid: 69d1b1037536b504884c93bb73d662db,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.16386965
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2302457091092795123, guid: 69d1b1037536b504884c93bb73d662db,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.16386965
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2302457091092795123, guid: 69d1b1037536b504884c93bb73d662db,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.16386965
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2302457091093092515, guid: 69d1b1037536b504884c93bb73d662db,
         type: 3}
       propertyPath: m_Name
-      value: Generic Impact Effect
+      value: Arrow Impact Effect
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 69d1b1037536b504884c93bb73d662db, type: 3}

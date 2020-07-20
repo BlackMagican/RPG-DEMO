@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using Core;
 using Saving;
 using UnityEngine;
 
@@ -9,7 +11,12 @@ namespace SceneManagement
         const string defaultSaveFile = "save";
         [SerializeField] float fadeInTime = 0.2f;
 
-        IEnumerator Start()
+        private void Awake()
+        {
+            StartCoroutine(LoadTheLastScene());
+        }
+
+        private IEnumerator LoadTheLastScene()
         {
             Fader fader = FindObjectOfType<Fader>();
             fader.FadeOutImmediate();
@@ -27,6 +34,11 @@ namespace SceneManagement
             {
                 Save();
             }
+
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                Delete();
+            }
         }
         public void Save()
         {
@@ -35,6 +47,11 @@ namespace SceneManagement
         public void Load()
         {
             GetComponent<SavingSystem>().Load(defaultSaveFile);
+        }
+
+        public void Delete()
+        {
+            GetComponent<SavingSystem>().Delete(defaultSaveFile);
         }
     }
 }
