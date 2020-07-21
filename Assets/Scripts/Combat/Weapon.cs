@@ -13,6 +13,10 @@ namespace Combat
         [SerializeField] float weaponDamage = 20f;
         [SerializeField] float percentageBonus = 0;
         [SerializeField] float weaponRange = 2f;
+
+        [SerializeField] private float additiveBuffForPlayer = 0f;
+
+        [SerializeField] private float percentageBuffForPlayer = 0f;
         // Player can't attack without interruption. 
         [SerializeField] private float timeBetweenAttack = 1f;
         [SerializeField] GameObject equippedPrefab = null;
@@ -146,6 +150,9 @@ namespace Combat
         /// <param name="instigator">
         /// Who launch an attack.
         /// </param>
+        /// <param name="calculateDamage">
+        /// Total Damage.
+        /// </param>
         public void LaunchProjectile(Transform rightHand, 
             Transform leftHand, Health target, GameObject instigator, float calculateDamage)
         {
@@ -171,5 +178,9 @@ namespace Combat
         }
 
         public float PercentageBonus => percentageBonus;
+
+        public float AdditiveBuffForPlayer => additiveBuffForPlayer;
+
+        public float PercentageBuffForPlayer => percentageBuffForPlayer;
     }
 }

@@ -11,6 +11,7 @@ namespace Stats
         [SerializeField] private Progression progression = null;
         [SerializeField] private GameObject levelUpParticleEffect = null;
         [SerializeField] private bool shouldUseModifier = false;
+        [SerializeField] private bool canUseBuff = true;
         private Experience experience;
 
         public event Action OnLevelUp;
@@ -50,17 +51,22 @@ namespace Stats
 
         public float GetStat(Stat stat)
         {
+            float totalPoint = GetBaseStat(stat);
             if (shouldUseModifier)
             {
-                return (GetBaseStat(stat) + 
-                        GetAdditiveModifiers(stat)) * 
+                totalPoint +=  GetAdditiveModifiers(stat) * 
                        (1 +  GetPercentageModifier(stat) / 100);
             }
-            else
+
+            if (canUseBuff)
             {
-                return GetBaseStat(stat);
+                float buffPoint = GetPercentageBuff(stat) / 100;
+                totalPoint += totalPoint * buffPoint;
+                totalPoint += GetAdditiveBuff(stat);
             }
-            
+
+            return totalPoint;
+
         }
 
         private float GetBaseStat(Stat stat)
@@ -74,6 +80,11 @@ namespace Stats
             if (currentLevel < 1)
                 currentLevel = CalculateLevel();
             return currentLevel;
+        }
+
+        public bool CanUseBuff
+        {
+            set => canUseBuff = value;
         }
 
         public int CalculateLevel()
@@ -108,7 +119,7 @@ namespace Stats
             if (!shouldUseModifier)
                 return 0;
             float total = 0f;
-            foreach (var provider in GetComponents<IModifierProvider>())
+            foreach (IModifierProvider provider in GetComponents<IModifierProvider>())
             {
                 foreach (float modifier in provider.GetAdditiveModifier(stat))
                 {
@@ -133,6 +144,38 @@ namespace Stats
             }
 
             return totalBonus;
+        }
+
+        private float GetPercentageBuff(Stat stat)
+        {
+            if (!canUseBuff)
+                return 0;
+            float total = 0f;
+            foreach (var provider in GetComponents<IBuffProvider>())
+            {
+                foreach (float modifier in provider.GetPercentageBuff(stat))
+                {
+                    total += modifier;
+                }
+            }
+
+            return total;
+        }
+
+        private float GetAdditiveBuff(Stat stat)
+        {
+            if (!canUseBuff)
+                return 0;
+            float total = 0f;
+            foreach (var provider in GetComponents<IBuffProvider>())
+            {
+                foreach (float modifier in provider.GetAdditiveBuff(stat))
+                {
+                    total += modifier;
+                }
+            }
+
+            return total;
         }
     }
 }

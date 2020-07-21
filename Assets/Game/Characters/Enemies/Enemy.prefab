@@ -26,7 +26,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f44b4e571c2424e0f9942d92fa6d7871, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 30
+  reGenerationPercentage: 80
 --- !u!114 &465269867289210381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,6 +239,11 @@ PrefabInstance:
     - target: {fileID: 1832330364506138390, guid: 6f5cdd396a8e043b5bdcac0960a649fa,
         type: 3}
       propertyPath: characterClass
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1832330364506138390, guid: 6f5cdd396a8e043b5bdcac0960a649fa,
+        type: 3}
+      propertyPath: canUseBuff
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

@@ -5,6 +5,6 @@ namespace Stats
         Health,
         ExperienceReward,
         ExperienceToLevelUp,
-        BaseDamage
+        Damage
     }
 }

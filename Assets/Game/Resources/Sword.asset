@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Sword
   m_EditorClassIdentifier: 
   weaponDamage: 20
-  percentageBonus: 10
+  percentageBonus: 0
   weaponRange: 2.3
+  additiveBuffForPlayer: 10
+  percentageBuffForPlayer: 10
   timeBetweenAttack: 1
   equippedPrefab: {fileID: 2748128038085128485, guid: 16fad4c97b2b342f38e37440a9977182,
     type: 3}

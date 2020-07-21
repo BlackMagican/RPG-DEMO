@@ -11,12 +11,13 @@ namespace Combat
     /// <summary>
     /// This class implements combat behaviour.
     /// </summary>
-    public class Fighter : MonoBehaviour, IAction, ISaveable, IModifierProvider
+    public class Fighter : MonoBehaviour, IAction, ISaveable, IModifierProvider, IBuffProvider
     {
         [SerializeField] Weapon defaultWeapon;
         [SerializeField] Transform rightHandTransform;
         [SerializeField] Transform leftHandTransform;
         [SerializeField] Health target;
+        [SerializeField] private BuffController buff;
 
         float timeSinceLastAttack = Mathf.Infinity;
         Weapon currentWeapon;
@@ -30,6 +31,7 @@ namespace Combat
             animator = GetComponent<Animator>();
             mover = GetComponent<Mover>();
             stats = GetComponent<BaseStats>();
+            buff = GetComponent<BuffController>();
         }
 
         private void Start()
@@ -38,6 +40,14 @@ namespace Combat
             {
                 EquipWeapon(defaultWeapon);
             }
+        }
+
+        private void SetWeaponBuff()
+        {
+            if (!buff) return;
+            float additive = currentWeapon.AdditiveBuffForPlayer;
+            float percentage = currentWeapon.PercentageBuffForPlayer;
+            buff.SetBuff(Stat.Damage, additive, percentage);
         }
 
         private void Update()
@@ -75,6 +85,7 @@ namespace Combat
             if (!weapon) return;
             currentWeapon = weapon;
             weapon.Spawn(rightHandTransform, leftHandTransform, animator);
+            SetWeaponBuff();
         }
 
         private void AttackBehaviour()
@@ -200,7 +211,7 @@ namespace Combat
 
         private float GetCalculatedDamage()
         {
-            float damage = stats.GetStat(Stat.BaseDamage);
+            float damage = stats.GetStat(Stat.Damage);
             return damage;
         }
 
@@ -261,7 +272,7 @@ namespace Combat
 
         public IEnumerable<float> GetAdditiveModifier(Stat stat)
         {
-            if (stat == Stat.BaseDamage)
+            if (stat == Stat.Damage)
             {
                 yield return currentWeapon.GetWeaponDamage();
             }
@@ -269,10 +280,20 @@ namespace Combat
 
         public IEnumerable<float> GetPercentageModifier(Stat stat)
         {
-            if (stat == Stat.BaseDamage)
+            if (stat == Stat.Damage)
             {
                 yield return currentWeapon.PercentageBonus;
             }
+        }
+        
+        public IEnumerable<float> GetAdditiveBuff(Stat stat)
+        {
+            yield return buff.GetAdditiveBuff(stat);
+        }
+
+        public IEnumerable<float> GetPercentageBuff(Stat stat)
+        {
+            yield return buff.GetPercentageBuff(stat);
         }
 
         public Health Target => target;

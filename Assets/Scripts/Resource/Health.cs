@@ -81,6 +81,7 @@ namespace Resource
                 return;
             }
             isDead = true;
+            GetComponent<BaseStats>().CanUseBuff = false;
             GetComponent<Animator>().SetTrigger("die");
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }
