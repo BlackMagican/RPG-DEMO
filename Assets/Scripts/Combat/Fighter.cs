@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using System.Collections.Generic;
+using Core;
 using Movement;
 using Resource;
 using Saving;
@@ -10,9 +11,8 @@ namespace Combat
     /// <summary>
     /// This class implements combat behaviour.
     /// </summary>
-    public class Fighter : MonoBehaviour, IAction, ISaveable
+    public class Fighter : MonoBehaviour, IAction, ISaveable, IModifierProvider
     {
-        [SerializeField] float defaultDamage = 10f;
         [SerializeField] Weapon defaultWeapon;
         [SerializeField] Transform rightHandTransform;
         [SerializeField] Transform leftHandTransform;
@@ -94,7 +94,7 @@ namespace Combat
             }
         }
 
-        public void TriggerAttack()
+        private void TriggerAttack()
         {
             animator.ResetTrigger("stopAttack");
             animator.SetTrigger("attack");
@@ -257,6 +257,22 @@ namespace Combat
         {
             animator.ResetTrigger("attack");
             animator.SetTrigger("stopAttack");
+        }
+
+        public IEnumerable<float> GetAdditiveModifier(Stat stat)
+        {
+            if (stat == Stat.BaseDamage)
+            {
+                yield return currentWeapon.GetWeaponDamage();
+            }
+        }
+
+        public IEnumerable<float> GetPercentageModifier(Stat stat)
+        {
+            if (stat == Stat.BaseDamage)
+            {
+                yield return currentWeapon.PercentageBonus;
+            }
         }
 
         public Health Target => target;

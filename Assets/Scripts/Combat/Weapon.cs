@@ -11,6 +11,7 @@ namespace Combat
     public class Weapon : ScriptableObject
     {
         [SerializeField] float weaponDamage = 20f;
+        [SerializeField] float percentageBonus = 0;
         [SerializeField] float weaponRange = 2f;
         // Player can't attack without interruption. 
         [SerializeField] private float timeBetweenAttack = 1f;
@@ -168,5 +169,7 @@ namespace Combat
         {
             return timeBetweenAttack;
         }
+
+        public float PercentageBonus => percentageBonus;
     }
 }

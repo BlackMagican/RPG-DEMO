@@ -104,8 +104,9 @@ namespace SceneManagement
         {
             GameObject player = GameObject.FindWithTag("Player");
             player.GetComponent<NavMeshAgent>().enabled = false;
-            player.transform.position = otherPortal.spawnPoint.transform.position;
-            player.transform.rotation = otherPortal.spawnPoint.transform.rotation;
+            var transform1 = otherPortal.spawnPoint.transform;
+            player.transform.position = transform1.position;
+            player.transform.rotation = transform1.rotation;
             player.GetComponent<NavMeshAgent>().enabled = true;
         }
     }

@@ -1,4 +1,5 @@
-﻿using Combat;
+﻿using System;
+using Combat;
 using Core;
 using Movement;
 using Resource;
@@ -28,13 +29,16 @@ namespace Control
         float timeSinceArrivedAtWaypoint = Mathf.Infinity;
         int currentWaypointIndex = 0;
 
-        // Start is called before the first frame update
-        void Start()
+        private void Awake()
         {
             fighter = GetComponent<Fighter>();
             player = GameObject.FindWithTag("Player");
             health = GetComponent<Health>();
             mover = GetComponent<Mover>();
+        }
+
+        void Start()
+        {
             guardPosition = transform.position;
         }
 

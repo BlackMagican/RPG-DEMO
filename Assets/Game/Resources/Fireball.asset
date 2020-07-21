@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Fireball
   m_EditorClassIdentifier: 
   weaponDamage: 30
+  percentageBonus: 20
   weaponRange: 15
   timeBetweenAttack: 2
   equippedPrefab: {fileID: 2040678346620639772, guid: 8d9b21981c4aa472b9b0ce0f4b51be77,

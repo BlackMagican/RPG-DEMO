@@ -10,6 +10,7 @@ namespace Stats
         [SerializeField] private CharacterClass characterClass;
         [SerializeField] private Progression progression = null;
         [SerializeField] private GameObject levelUpParticleEffect = null;
+        [SerializeField] private bool shouldUseModifier = false;
         private Experience experience;
 
         public event Action OnLevelUp;
@@ -49,11 +50,26 @@ namespace Stats
 
         public float GetStat(Stat stat)
         {
+            if (shouldUseModifier)
+            {
+                return (GetBaseStat(stat) + 
+                        GetAdditiveModifiers(stat)) * 
+                       (1 +  GetPercentageModifier(stat) / 100);
+            }
+            else
+            {
+                return GetBaseStat(stat);
+            }
+            
+        }
+
+        private float GetBaseStat(Stat stat)
+        {
             return progression.GetStat(stat, 
                 characterClass, GetLevel());
         }
 
-        public int GetLevel()
+        private int GetLevel()
         {
             if (currentLevel < 1)
                 currentLevel = CalculateLevel();
@@ -85,6 +101,38 @@ namespace Stats
             }
             
             return secondLastLevel + 1;
+        }
+
+        private float GetAdditiveModifiers(Stat stat)
+        {
+            if (!shouldUseModifier)
+                return 0;
+            float total = 0f;
+            foreach (var provider in GetComponents<IModifierProvider>())
+            {
+                foreach (float modifier in provider.GetAdditiveModifier(stat))
+                {
+                    total += modifier;
+                }
+            }
+
+            return total;
+        }
+        
+        private float GetPercentageModifier(Stat stat)
+        {
+            if (!shouldUseModifier)
+                return 0;
+            float totalBonus = 0f;
+            foreach (var bonus in GetComponents<IModifierProvider>())
+            {
+                foreach (var enhance in bonus.GetPercentageModifier(stat))
+                {
+                    totalBonus += enhance;
+                }
+            }
+
+            return totalBonus;
         }
     }
 }

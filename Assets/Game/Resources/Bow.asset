@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Bow
   m_EditorClassIdentifier: 
   weaponDamage: 8
+  percentageBonus: 0
   weaponRange: 20
   timeBetweenAttack: 0.5
   equippedPrefab: {fileID: 3539634653075695158, guid: 0bb836324be6b47baa9aeedf259e182a,
     type: 3}
-  clip: {fileID: 7400000, guid: 24d693751e9fd0b42ba8f9595d8b5f5e, type: 3}
   animatorOverride: {fileID: 22100000, guid: 5c1f79946d56147ada6db1fbe8dc9301, type: 2}
   projectile: {fileID: 7487332633027475757, guid: 63dac711e37964a00a4cabdb14fd16d1,
     type: 3}
