@@ -13,9 +13,18 @@ namespace Control
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] float speedFraction = 1f;
+        [SerializeField] private CursorMapping[] cursors;
         Health health = null;
         private Mover mover = null;
         private Fighter fighter = null;
+
+        [System.Serializable]
+        struct CursorMapping
+        {
+            public CursorType type;
+            public Texture2D texture;
+            public Vector2 hotSpot;
+        }
 
         private void Awake()
         {
@@ -34,6 +43,7 @@ namespace Control
                 return;
             if (InteractWithMovement())
                 return;
+            SetCursor(CursorType.None);
         }
 
         /// <summary>
@@ -64,6 +74,8 @@ namespace Control
                 {
                     fighter.Attack(target.gameObject);
                 }
+
+                SetCursor(CursorType.Combat);
                 return true;
             }
             return false;
@@ -87,7 +99,47 @@ namespace Control
             {
                 mover.StartMoveAction(hit.point, speedFraction);
             }
+            SetCursor(CursorType.Movement);
             return true;
+        }
+        
+        /// <summary>
+        ///
+        /// Set different for different behaviours.
+        /// 
+        /// </summary>
+        /// <param name="type">
+        /// Cursor's type.
+        /// </param>
+        private void SetCursor(CursorType type)
+        {
+            CursorMapping mapping = GetCursorMapping(type);
+            Cursor.SetCursor(mapping.texture, mapping.hotSpot, CursorMode.Auto);
+        }
+
+        /// <summary>
+        ///
+        /// Get cursor's information from array.
+        /// 
+        /// </summary>
+        /// <param name="type">
+        /// Cursor's type.
+        /// </param>
+        /// <returns>
+        ///    If find the correspond cursor, then return.
+        ///    else return the first cursor.
+        /// </returns>
+        private CursorMapping GetCursorMapping(CursorType type)
+        {
+            foreach (var cursor in cursors)
+            {
+                if (cursor.type == type)
+                {
+                    return cursor;
+                }
+            }
+
+            return cursors[0];
         }
 
         /// <summary>

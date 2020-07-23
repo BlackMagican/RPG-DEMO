@@ -1,6 +1,6 @@
-﻿using System;
-using Combat;
+﻿using Combat;
 using Core;
+using GameDevTV.Utils;
 using Movement;
 using Resource;
 using UnityEngine;
@@ -13,21 +13,21 @@ namespace Control
     public class AIController : MonoBehaviour
     {
         [SerializeField] float chaseDistance = 5f;
-        [SerializeField] GameObject player = null;
+        [SerializeField] GameObject player;
         [SerializeField] float suspicionTime = 3f;
-        [SerializeField] PatrolPath patrolPath = null;
-        [SerializeField] float waypointTolerance = 1f;
-        [SerializeField] float waypointDwellTime = 2f;
+        [SerializeField] PatrolPath patrolPath;
+        [SerializeField] private float wayPointTolerance = 1f;
+        [SerializeField] float wayPointDwellTime = 2f;
         [Range(0, 1)] [SerializeField] float patrolSpeedFraction = 0.2f;
 
         Fighter fighter;
         Health health;
-        Mover mover = null;
-        Vector3 guardPosition;
+        Mover mover;
+        LazyValue<Vector3> guardPosition;
 
         float timeSinceLastSawPlayer = Mathf.Infinity;
-        float timeSinceArrivedAtWaypoint = Mathf.Infinity;
-        int currentWaypointIndex = 0;
+        float timeSinceArrivedAtWayPoint = Mathf.Infinity;
+        int currentWayPointIndex;
 
         private void Awake()
         {
@@ -35,11 +35,17 @@ namespace Control
             player = GameObject.FindWithTag("Player");
             health = GetComponent<Health>();
             mover = GetComponent<Mover>();
+            guardPosition = new LazyValue<Vector3>(GetGuardPosition);
+        }
+
+        private Vector3 GetGuardPosition()
+        {
+            return transform.position;
         }
 
         void Start()
         {
-            guardPosition = transform.position;
+            guardPosition.ForceInit();
         }
 
         // Update is called once per frame
@@ -76,7 +82,7 @@ namespace Control
         private void UpdateTimers()
         {
             timeSinceLastSawPlayer += Time.deltaTime;
-            timeSinceArrivedAtWaypoint += Time.deltaTime;
+            timeSinceArrivedAtWayPoint += Time.deltaTime;
         }
 
         /// <summary>
@@ -85,18 +91,18 @@ namespace Control
         /// </summary>
         private void PatrolBehaviour()
         {
-            Vector3 nextPosition = guardPosition;
+            Vector3 nextPosition = guardPosition.value;
 
             if (patrolPath != null)
             {
-                if (AtWaypoint())
+                if (AtWayPoint())
                 {
-                    timeSinceArrivedAtWaypoint = 0;
-                    CycleWaypoint();
+                    timeSinceArrivedAtWayPoint = 0;
+                    CycleWayPoint();
                 }
-                nextPosition = GetCurrentWaypoint();
+                nextPosition = GetCurrentWayPoint();
             }
-            if (timeSinceArrivedAtWaypoint > waypointDwellTime)
+            if (timeSinceArrivedAtWayPoint > wayPointDwellTime)
             {
                 mover.StartMoveAction(nextPosition, patrolSpeedFraction);
             }
@@ -106,9 +112,9 @@ namespace Control
         /// Tell the character what waypoint is it standing.
         /// </summary>
         /// <returns>The waypoint's position.</returns>
-        private Vector3 GetCurrentWaypoint()
+        private Vector3 GetCurrentWayPoint()
         {
-            return patrolPath.GetWaypoint(currentWaypointIndex);
+            return patrolPath.GetWaypoint(currentWayPointIndex);
         }
 
         /// <summary>
@@ -118,18 +124,18 @@ namespace Control
         ///     True: Character stands on the waypoint. 
         ///     False: Character is not stand on the waypoint.
         /// </returns>
-        private bool AtWaypoint()
+        private bool AtWayPoint()
         {
             return Vector3.Distance(transform.position,
-                GetCurrentWaypoint()) < waypointTolerance;
+                GetCurrentWayPoint()) < wayPointTolerance;
         }
 
         /// <summary>
-        /// Get next waypoint's position.
+        /// Get next wayPoint's position.
         /// </summary>
-        private void CycleWaypoint()
+        private void CycleWayPoint()
         {
-            currentWaypointIndex = patrolPath.GetNextIndex(currentWaypointIndex);
+            currentWayPointIndex = patrolPath.GetNextIndex(currentWayPointIndex);
         }
 
         /// <summary>

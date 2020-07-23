@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using Core;
 using Saving;
 using UnityEngine;
 
@@ -8,7 +7,7 @@ namespace SceneManagement
 {
     public class SavingWrapper : MonoBehaviour
     {
-        const string defaultSaveFile = "save";
+        const string DefaultSaveFile = "save";
         [SerializeField] float fadeInTime = 0.2f;
 
         private void Awake()
@@ -18,12 +17,12 @@ namespace SceneManagement
 
         private IEnumerator LoadTheLastScene()
         {
+            yield return GetComponent<SavingSystem>().LoadLastScene(DefaultSaveFile);
             Fader fader = FindObjectOfType<Fader>();
             fader.FadeOutImmediate();
-            yield return GetComponent<SavingSystem>().LoadLastScene(defaultSaveFile);
             yield return fader.FadeIn(fadeInTime);
         }
-
+        
         void Update()
         {
             if (Input.GetKeyDown(KeyCode.L))
@@ -39,19 +38,20 @@ namespace SceneManagement
             {
                 Delete();
             }
+            
         }
         public void Save()
         {
-            GetComponent<SavingSystem>().Save(defaultSaveFile);
+            GetComponent<SavingSystem>().Save(DefaultSaveFile);
         }
         public void Load()
         {
-            GetComponent<SavingSystem>().Load(defaultSaveFile);
+            GetComponent<SavingSystem>().Load(DefaultSaveFile);
         }
 
-        public void Delete()
+        private void Delete()
         {
-            GetComponent<SavingSystem>().Delete(defaultSaveFile);
+            GetComponent<SavingSystem>().Delete(DefaultSaveFile);
         }
     }
 }

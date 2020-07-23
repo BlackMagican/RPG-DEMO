@@ -17,8 +17,6 @@ GameObject:
   - component: {fileID: 1483736590}
   - component: {fileID: 3230489446417275264}
   - component: {fileID: 1832330364506138390}
-  - component: {fileID: 2811292702664759035}
-  - component: {fileID: 8704628274598027018}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -193,32 +191,3 @@ MonoBehaviour:
   levelUpParticleEffect: {fileID: 0}
   shouldUseModifier: 0
   canUseBuff: 1
---- !u!114 &2811292702664759035
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 234610530284354062}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15ab8327627a04a7a97702126800fb6f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  buff: {fileID: 8704628274598027018}
---- !u!114 &8704628274598027018
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 234610530284354062}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1cfbde643f664ff1bf7f172e0259fe1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attackBuffPercentage: 0
-  healthBuffPercentage: 0
-  attackAdditiveBuff: 0
-  healthAdditiveBuff: 0

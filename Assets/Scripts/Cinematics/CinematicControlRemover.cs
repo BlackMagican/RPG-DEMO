@@ -1,4 +1,5 @@
-﻿using Control;
+﻿using System;
+using Control;
 using Core;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -9,12 +10,21 @@ namespace Cinematics
     {
         GameObject player = null;
 
-        void Start()
+        void Awake()
         {
-            /* PlayableDirector.played:  */
+            player = GameObject.FindGameObjectWithTag("Player");
+        }
+
+        private void OnEnable()
+        {
             GetComponent<PlayableDirector>().played += DisableControl;
             GetComponent<PlayableDirector>().stopped += EnableControl;
-            player = GameObject.FindGameObjectWithTag("Player");
+        }
+
+        private void OnDisable()
+        {
+            GetComponent<PlayableDirector>().played -= DisableControl;
+            GetComponent<PlayableDirector>().stopped -= EnableControl;
         }
 
         void DisableControl(PlayableDirector pd)

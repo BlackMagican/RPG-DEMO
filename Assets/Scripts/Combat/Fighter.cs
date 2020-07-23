@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Core;
+using GameDevTV.Utils;
 using Movement;
 using Resource;
 using Saving;
@@ -11,16 +13,15 @@ namespace Combat
     /// <summary>
     /// This class implements combat behaviour.
     /// </summary>
-    public class Fighter : MonoBehaviour, IAction, ISaveable, IModifierProvider, IBuffProvider
+    public class Fighter : MonoBehaviour, IAction, ISaveable, IModifierProvider
     {
         [SerializeField] Weapon defaultWeapon;
         [SerializeField] Transform rightHandTransform;
         [SerializeField] Transform leftHandTransform;
-        [SerializeField] Health target;
-        [SerializeField] private BuffController buff;
+        [SerializeField] Health attackTarget;
 
         float timeSinceLastAttack = Mathf.Infinity;
-        Weapon currentWeapon;
+        LazyValue<Weapon> currentWeapon;
         private BaseStats stats;
         private Animator animator;
         Mover mover;
@@ -31,38 +32,39 @@ namespace Combat
             animator = GetComponent<Animator>();
             mover = GetComponent<Mover>();
             stats = GetComponent<BaseStats>();
-            buff = GetComponent<BuffController>();
+            currentWeapon = new LazyValue<Weapon>(SetUpDefaultWeapon);
+        }
+
+        /// <summary>
+        /// 
+        /// Player will be spawned with default weapon.
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private Weapon SetUpDefaultWeapon()
+        {
+            AttachWeapon(defaultWeapon);
+            return defaultWeapon;
         }
 
         private void Start()
         {
-            if (!currentWeapon)
-            {
-                EquipWeapon(defaultWeapon);
-            }
-        }
-
-        private void SetWeaponBuff()
-        {
-            if (!buff) return;
-            float additive = currentWeapon.AdditiveBuffForPlayer;
-            float percentage = currentWeapon.PercentageBuffForPlayer;
-            buff.SetBuff(Stat.Damage, additive, percentage);
+            currentWeapon.ForceInit();
         }
 
         private void Update()
         {
             timeSinceLastAttack += Time.deltaTime;
-            /* This script only works after having an attack target 
-             * and this target is not dead.
+            /* This script only works after having an attack attackTarget 
+             * and this attackTarget is not dead.
              */
-            if (!target || target.IsDead()) return;
+            if (!attackTarget || attackTarget.IsDead()) return;
             if (!GetIsInRange())
             {
-                /* If character is too far from target,
-                 * it should move to the target at first.
+                /* If character is too far from attackTarget,
+                 * it should move to the attackTarget at first.
                  */
-                mover.MoveTo(target.transform.position, 1f);
+                mover.MoveTo(attackTarget.transform.position, 1f);
             }
             else
             {
@@ -83,17 +85,28 @@ namespace Combat
         public void EquipWeapon(Weapon weapon)
         {
             if (!weapon) return;
-            currentWeapon = weapon;
+            currentWeapon.value = weapon;
+            AttachWeapon(weapon);
+
+            if (Math.Abs(currentWeapon.value.HealthPercentageBonus) > 0)
+            {
+                print("reset health");
+                gameObject.GetComponent<Health>().ReSetHealth();
+            }
+
+        }
+
+        private void AttachWeapon(Weapon weapon)
+        {
             weapon.Spawn(rightHandTransform, leftHandTransform, animator);
-            SetWeaponBuff();
         }
 
         private void AttackBehaviour()
         {
             transform.rotation = Quaternion.LookRotation(
-                target.transform.position - transform.position, 
+                attackTarget.transform.position - transform.position, 
                 Vector3.up);
-            if (timeSinceLastAttack > currentWeapon.GetTimeBetweenAttack())
+            if (timeSinceLastAttack > currentWeapon.value.GetTimeBetweenAttack())
             {
                 // This will trigger Hit() event.
                 TriggerAttack();
@@ -116,7 +129,7 @@ namespace Combat
         /// Define whether characters can do attack behaviour.
         /// 
         /// </summary>
-        /// <param name="combatTarget">Attack target</param>
+        /// <param name="combatTarget">Attack attackTarget</param>
         /// <returns>
         ///     True: characters can attack;
         ///     False: characters can't attack.
@@ -142,8 +155,8 @@ namespace Combat
         ///  instigator is the character who launch the attack.    *
         ///  1. From Fighter.Hit() ----> Health.TakeDamage()       *
         ///                                                        *
-        ///  If the combat target is killed                        *
-        ///     Instigator will gain Experience from combat target.*
+        ///  If the combat attackTarget is killed                        *
+        ///     Instigator will gain Experience from combat attackTarget.*
         ///                                                        *
         ///  2. From Fighter.Shoot() --> Weapon.LaunchProjectile() *
         ///  From LaunchProjectile() --> Projectile.SetTarget()    *
@@ -153,26 +166,26 @@ namespace Combat
         /// </summary>
         void Hit()
         {
-            if (!target)
+            if (!attackTarget)
                 return;
             
-            if (currentWeapon)
+            if (currentWeapon.value)
             {
-                if (!currentWeapon.HasProjectile() && 
-                    currentWeapon.hitEffect)
+                if (!currentWeapon.value.HasProjectile() && 
+                    currentWeapon.value.hitEffect)
                 {
                     Vector3 location = GetEffectLocation();
-                    Instantiate(currentWeapon.hitEffect, 
+                    Instantiate(currentWeapon.value.hitEffect, 
                         location, transform.rotation);
                 }
-                target.TakeDamage(gameObject, 
+                attackTarget.TakeDamage(gameObject, 
                    GetCalculatedDamage());
             }
             else
             {
                 // If character doesn't have weapon,
                 // it does damage by default value.
-                target.TakeDamage(gameObject, GetCalculatedDamage());
+                attackTarget.TakeDamage(gameObject, GetCalculatedDamage());
             }
         }
 
@@ -186,13 +199,13 @@ namespace Combat
         /// </returns>
         private Vector3 GetEffectLocation()
         {
-            CapsuleCollider targetCollider = target.GetComponent<CapsuleCollider>();
+            CapsuleCollider targetCollider = attackTarget.GetComponent<CapsuleCollider>();
             if (targetCollider)
             {
-                return target.transform.position + 
+                return attackTarget.transform.position + 
                        Vector3.up * targetCollider.height / 2;
             }
-            return target.transform.position;
+            return attackTarget.transform.position;
         }
 
         /// <summary>
@@ -202,13 +215,22 @@ namespace Combat
         /// </summary>
         void Shoot()
         {
-            if (currentWeapon.HasProjectile())
+            if (currentWeapon.value.HasProjectile())
             {
-                currentWeapon.LaunchProjectile(rightHandTransform, 
-                    leftHandTransform, target, gameObject, GetCalculatedDamage());
+                currentWeapon.value.LaunchProjectile(rightHandTransform, 
+                    leftHandTransform, attackTarget, gameObject, GetCalculatedDamage());
             }
         }
 
+        /// <summary>
+        ///
+        /// When character combat, this method will return
+        /// character's basic damage + modifier damage.
+        /// 
+        /// </summary>
+        /// <returns>
+        /// Finally damage.
+        /// </returns>
         private float GetCalculatedDamage()
         {
             float damage = stats.GetStat(Stat.Damage);
@@ -217,7 +239,7 @@ namespace Combat
 
         /// <summary>
         ///
-        /// Whether the target is within player's attack range.
+        /// Whether the attackTarget is within player's attack range.
         /// 
         /// </summary>
         /// <returns>
@@ -227,8 +249,8 @@ namespace Combat
         private bool GetIsInRange()
         {
             return
-                Vector3.Distance(transform.position, target.transform.position)
-                < currentWeapon.GetWeaponRange();
+                Vector3.Distance(transform.position, attackTarget.transform.position)
+                < currentWeapon.value.GetWeaponRange();
         }
 
         /// <summary>
@@ -244,7 +266,7 @@ namespace Combat
         public void Attack(GameObject combatTarget)
         {
             GetComponent<ActionScheduler>().StartAction(this);
-            target = combatTarget.GetComponent<Health>();
+            attackTarget = combatTarget.GetComponent<Health>();
         }
 
         /// <summary>
@@ -256,7 +278,7 @@ namespace Combat
         public void Cancel()
         {
             StopAttack();
-            target = null;
+            attackTarget = null;
         }
 
         /// <summary>
@@ -274,33 +296,28 @@ namespace Combat
         {
             if (stat == Stat.Damage)
             {
-                yield return currentWeapon.GetWeaponDamage();
+                yield return currentWeapon.value.GetWeaponDamage();
             }
         }
 
         public IEnumerable<float> GetPercentageModifier(Stat stat)
         {
-            if (stat == Stat.Damage)
+            switch (stat)
             {
-                yield return currentWeapon.PercentageBonus;
+                case Stat.Damage:
+                    yield return currentWeapon.value.DamagePercentageBonus;
+                    break;
+                case Stat.Health:
+                    yield return currentWeapon.value.HealthPercentageBonus;
+                    break;
             }
         }
-        
-        public IEnumerable<float> GetAdditiveBuff(Stat stat)
-        {
-            yield return buff.GetAdditiveBuff(stat);
-        }
 
-        public IEnumerable<float> GetPercentageBuff(Stat stat)
-        {
-            yield return buff.GetPercentageBuff(stat);
-        }
-
-        public Health Target => target;
+        public Health AttackTarget => attackTarget;
 
         public object CaptureState()
         {
-            return currentWeapon.name;
+            return currentWeapon.value.name;
         }
 
         public void RestoreState(object state)

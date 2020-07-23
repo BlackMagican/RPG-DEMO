@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace SceneManagement
 {
+    /// <summary>
+    /// Use for scene change.
+    /// </summary>
     public class Fader : MonoBehaviour
     {
         CanvasGroup canvasGroup;

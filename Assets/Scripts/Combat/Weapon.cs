@@ -11,12 +11,10 @@ namespace Combat
     public class Weapon : ScriptableObject
     {
         [SerializeField] float weaponDamage = 20f;
-        [SerializeField] float percentageBonus = 0;
+        [SerializeField] float damagePercentageBonus = 0;
+        [SerializeField] private float healthPercentageBonus = 0;
         [SerializeField] float weaponRange = 2f;
-
-        [SerializeField] private float additiveBuffForPlayer = 0f;
-
-        [SerializeField] private float percentageBuffForPlayer = 0f;
+        
         // Player can't attack without interruption. 
         [SerializeField] private float timeBetweenAttack = 1f;
         [SerializeField] GameObject equippedPrefab = null;
@@ -177,10 +175,8 @@ namespace Combat
             return timeBetweenAttack;
         }
 
-        public float PercentageBonus => percentageBonus;
+        public float DamagePercentageBonus => damagePercentageBonus;
 
-        public float AdditiveBuffForPlayer => additiveBuffForPlayer;
-
-        public float PercentageBuffForPlayer => percentageBuffForPlayer;
+        public float HealthPercentageBonus => healthPercentageBonus;
     }
 }

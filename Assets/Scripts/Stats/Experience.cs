@@ -10,6 +10,10 @@ namespace Stats
 
         public event Action onExpGained;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="experience"></param>
         public void GainExperience(float experience)
         {
             experiencePoint += experience;

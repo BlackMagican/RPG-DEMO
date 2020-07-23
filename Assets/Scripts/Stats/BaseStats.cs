@@ -1,4 +1,5 @@
 ﻿using System;
+using GameDevTV.Utils;
 using UnityEngine;
 
 namespace Stats
@@ -8,36 +9,42 @@ namespace Stats
         [Range(1, 99)]
         [SerializeField] private int startingLevel = 1;
         [SerializeField] private CharacterClass characterClass;
-        [SerializeField] private Progression progression = null;
-        [SerializeField] private GameObject levelUpParticleEffect = null;
-        [SerializeField] private bool shouldUseModifier = false;
-        [SerializeField] private bool canUseBuff = true;
+        [SerializeField] private Progression progression;
+        [SerializeField] private GameObject levelUpParticleEffect;
+        [SerializeField] private bool shouldUseModifier;
         private Experience experience;
 
         public event Action OnLevelUp;
 
-        private int currentLevel = 0;
+        private LazyValue<int> currentLevel;
 
         private void Awake()
         {
             experience = GetComponent<Experience>();
+            currentLevel = new LazyValue<int>(CalculateLevel);
         }
 
         private void Start()
         {
-            currentLevel = CalculateLevel();
             if (experience)
             {
                 experience.onExpGained += UpdateLevel;
             }
+            currentLevel.ForceInit();
         }
 
+        /// <summary>
+        ///
+        /// When gain experience, call this method and calculate
+        /// what level should player be now.
+        /// 
+        /// </summary>
         private void UpdateLevel()
         {
-            int newLevel = CalculateLevel();
-            if (newLevel > currentLevel)
+           int newLevel = CalculateLevel();
+            if (newLevel> currentLevel.value)
             {
-                currentLevel = newLevel;
+                currentLevel.value = newLevel;
                 LevelUpEffect();
                 if (OnLevelUp != null) 
                     OnLevelUp();
@@ -49,24 +56,23 @@ namespace Stats
             Instantiate(levelUpParticleEffect, transform);
         }
 
+        /// <summary>
+        /// 
+        /// Return different stat value.
+        /// 
+        /// </summary>
+        /// <param name="stat"></param>
+        /// <returns></returns>
         public float GetStat(Stat stat)
         {
             float totalPoint = GetBaseStat(stat);
             if (shouldUseModifier)
             {
-                totalPoint +=  GetAdditiveModifiers(stat) * 
-                       (1 +  GetPercentageModifier(stat) / 100);
+                totalPoint *= (1 +  GetPercentageModifier(stat) / 100);
+                totalPoint += GetAdditiveModifiers(stat);
             }
-
-            if (canUseBuff)
-            {
-                float buffPoint = GetPercentageBuff(stat) / 100;
-                totalPoint += totalPoint * buffPoint;
-                totalPoint += GetAdditiveBuff(stat);
-            }
-
+            
             return totalPoint;
-
         }
 
         private float GetBaseStat(Stat stat)
@@ -75,18 +81,21 @@ namespace Stats
                 characterClass, GetLevel());
         }
 
+        /// <summary>
+        /// Get the current level.
+        /// </summary>
+        /// <returns>
+        ///     Character current level.
+        /// </returns>
         private int GetLevel()
         {
-            if (currentLevel < 1)
-                currentLevel = CalculateLevel();
-            return currentLevel;
+            return currentLevel.value;
         }
 
-        public bool CanUseBuff
-        {
-            set => canUseBuff = value;
-        }
-
+        /// <summary>
+        /// Calculate Level throw player's experience.
+        /// </summary>
+        /// <returns></returns>
         public int CalculateLevel()
         {
             if (!experience)
@@ -110,10 +119,18 @@ namespace Stats
                 if (expToLevelUp > currentExp)
                     return level;
             }
-            
             return secondLastLevel + 1;
         }
 
+        /// <summary>
+        /// 
+        /// Get weapon's attribute bonus.(const value)
+        /// 
+        /// </summary>
+        /// <param name="stat">
+        /// Pass different stat, return the corresponding value.
+        /// </param>
+        /// <returns></returns>
         private float GetAdditiveModifiers(Stat stat)
         {
             if (!shouldUseModifier)
@@ -126,10 +143,18 @@ namespace Stats
                     total += modifier;
                 }
             }
-
             return total;
         }
         
+        /// <summary>
+        /// 
+        /// Get weapon's attribute bonus.(percentage value)
+        /// 
+        /// </summary>
+        /// <param name="stat">
+        /// Pass different stat, return the corresponding value.
+        /// </param>
+        /// <returns></returns>
         private float GetPercentageModifier(Stat stat)
         {
             if (!shouldUseModifier)
@@ -144,38 +169,6 @@ namespace Stats
             }
 
             return totalBonus;
-        }
-
-        private float GetPercentageBuff(Stat stat)
-        {
-            if (!canUseBuff)
-                return 0;
-            float total = 0f;
-            foreach (var provider in GetComponents<IBuffProvider>())
-            {
-                foreach (float modifier in provider.GetPercentageBuff(stat))
-                {
-                    total += modifier;
-                }
-            }
-
-            return total;
-        }
-
-        private float GetAdditiveBuff(Stat stat)
-        {
-            if (!canUseBuff)
-                return 0;
-            float total = 0f;
-            foreach (var provider in GetComponents<IBuffProvider>())
-            {
-                foreach (float modifier in provider.GetAdditiveBuff(stat))
-                {
-                    total += modifier;
-                }
-            }
-
-            return total;
         }
     }
 }

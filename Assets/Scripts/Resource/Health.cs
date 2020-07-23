@@ -1,4 +1,6 @@
-﻿using Core;
+﻿using System;
+using Core;
+using GameDevTV.Utils;
 using Saving;
 using Stats;
 using UnityEngine;
@@ -8,24 +10,47 @@ namespace Resource
     public class Health : MonoBehaviour, ISaveable
     {
         [SerializeField] private float reGenerationPercentage = 80;
-        float health = -1f;
-        private float fullHealth = 0f;
+        LazyValue<float> health;
+        float fullHealth;
 
         bool isDead = false;
+
+        private void Awake()
+        {
+            health = new LazyValue<float>(GetInitialHealth);
+        }
+
+        private float GetInitialHealth()
+        {
+            return GetComponent<BaseStats>().GetStat(Stat.Health);
+        }
 
         private void Start()
         {
             GetComponent<BaseStats>().OnLevelUp += ReGenerateHealth;
-            if (health < 0)
-            {
-                health = GetComponent<BaseStats>().GetStat(Stat.Health);
-                fullHealth = health;
-            }
+            health.ForceInit();
+            fullHealth = health.value;
         }
 
         public bool IsDead()
         {
             return isDead;
+        }
+        
+        /// <summary>
+        /// 
+        /// Reset character's health when equip a weapon.
+        /// 
+        /// </summary>
+        public void ReSetHealth()
+        {
+            float temp = fullHealth;
+            fullHealth = GetInitialHealth();
+            if (Math.Abs(health.value - temp) < 0.2f)
+            {
+                health.value = fullHealth;
+            }
+
         }
 
         /// <summary>
@@ -42,32 +67,41 @@ namespace Resource
         public void TakeDamage(GameObject instigator, float damage)
         {
             print(gameObject.name + "took damage: " + damage);
-            health = Mathf.Max(health - damage, 0f);
-            if (health <= 0)
+            health.value = Mathf.Max(health.value - damage, 0f);
+            if (health.value <= 0)
             {
                 Die();
                 AwardExperience(instigator);
             }
         }
         
-        public float GetPercentage()
+        /// <summary>
+        /// Get character's health percentage for display.
+        /// </summary>
+        /// <returns></returns>
+        private float GetPercentage()
         {
-            return 100 * health / fullHealth;
+            return 100 * health.value / fullHealth;
         }
         
+        /// <summary>
+        /// 
+        /// When player level up, reset the health.
+        /// 
+        /// </summary>
         private void ReGenerateHealth()
         {
             float lastLevelHealthPoint = GetPercentage();
             fullHealth = GetComponent<BaseStats>().GetStat(Stat.Health);
             float reSetPoint = Mathf.Max(lastLevelHealthPoint, 
                 reGenerationPercentage);
-            health = (reSetPoint * fullHealth) / 100;
+            health.value = (reSetPoint * fullHealth) / 100;
 
         }
 
         public float FullHealth => fullHealth;
 
-        public float Health1 => health;
+        public float Health1 => health.value;
 
         /// <summary>
         ///
@@ -81,13 +115,25 @@ namespace Resource
                 return;
             }
             isDead = true;
-            GetComponent<BaseStats>().CanUseBuff = false;
             GetComponent<Animator>().SetTrigger("die");
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }
 
+        /// <summary>
+        /// 
+        /// This method will be called When player killed an enemy
+        /// and gain experience.
+        /// 
+        /// </summary>
+        /// <param name="instigator">
+        /// Who will gain the experience.
+        /// </param>
         private void AwardExperience(GameObject instigator)
         {
+            if (!instigator.CompareTag("Player"))
+            {
+                return;
+            }
             Experience exp = instigator.GetComponent<Experience>();
             if (!exp)
             {
@@ -107,12 +153,12 @@ namespace Resource
 
         public void RestoreState(object state)
         {
-            if (state is float healthPoint)
+            if (state is LazyValue<float> healthPoint)
             {
                 health = healthPoint;
             }
 
-            if (health <= 0)
+            if (health.value <= 0)
             {
                 Die();
             }

@@ -7,11 +7,6 @@ namespace SceneManagement
 {
     public class Portal : MonoBehaviour
     {
-        /*
-         * This enum is used to determine a couple of portals.
-         * Player cross portal A, then it will be teleported to Portal B
-         * which have same identifier. 
-         */
 
         [SerializeField] int sceneToLoad = -1;
         [SerializeField] Transform spawnPoint;

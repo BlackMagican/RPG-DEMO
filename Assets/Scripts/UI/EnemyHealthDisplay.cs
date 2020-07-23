@@ -19,13 +19,13 @@ namespace UI
         // Update is called once per frame
         void Update()
         {
-            if (!fighter.Target)
+            if (!fighter.AttackTarget)
             {
                 healthValue.text = "N/A";
                 return;
             }
 
-            Health health = fighter.Target;
+            Health health = fighter.AttackTarget;
             //healthValue.text = String.Format("{0:0.0}%", health.GetPercentage());
             healthValue.text = String.Format("{0:0} / {1:0}", health.Health1, health.FullHealth);
         }
