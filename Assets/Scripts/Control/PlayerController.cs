@@ -2,6 +2,7 @@
 using Movement;
 using Resource;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Control
 {
@@ -35,49 +36,45 @@ namespace Control
 
         void Update()
         {
+            if (InteractWithUI())
+            {
+                return;   
+            }
             if (health.IsDead())
             {
+                SetCursor(CursorType.None);
                 return;
             }
-            if (InteractWithCombat())
+            if (InteractWithComponent())
                 return;
             if (InteractWithMovement())
                 return;
             SetCursor(CursorType.None);
         }
 
-        /// <summary>
-        /// private bool InteractWithCombat -> Whether the player clicked enemy
-        ///
-        /// This will determine whether player clicked enemy. If the player
-        /// clicked an enemy, it will call the "Attack" method.
-        /// 
-        /// </summary>
-        /// 
-        /// <returns>
-        /// Returns whether player clicked an enemy
-        /// </returns>
-        private bool InteractWithCombat()
+        private bool InteractWithUI()
+        {
+            if (!EventSystem.current.IsPointerOverGameObject()) return false;
+            SetCursor(CursorType.UI);
+            return true;
+        }
+        
+        private bool InteractWithComponent()
         {
             RaycastHit[] hits = Physics.RaycastAll(GetMouseRay());
-            foreach(RaycastHit hit in hits)
+            foreach (var hit in hits)
             {
-                CombatTarget target = hit.transform.GetComponent<CombatTarget>();
-
-                if ((!target) ||
-                    !fighter.CanAttack(target.gameObject))
+                IRayCastable[] detectables =
+                    hit.transform.GetComponents<IRayCastable>();
+                foreach (var detectable in detectables)
                 {
-                    continue;
+                    if (!detectable.HandleRayCast(this)) 
+                        continue;
+                    SetCursor(CursorType.PickUp);
+                    return true;
                 }
-
-                if (Input.GetMouseButtonDown(1))
-                {
-                    fighter.Attack(target.gameObject);
-                }
-
-                SetCursor(CursorType.Combat);
-                return true;
             }
+
             return false;
         }
 
@@ -89,7 +86,7 @@ namespace Control
         /// </summary>
         /// 
         /// <returns>
-        /// Returns whether player clicked on a moveable location.
+        /// Returns whether player clicked on a movable location.
         /// </returns>
         private bool InteractWithMovement()
         {

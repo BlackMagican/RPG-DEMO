@@ -7,6 +7,8 @@
     {
         None,
         Movement,
-        Combat
+        Combat,
+        UI,
+        PickUp
     }
 }
